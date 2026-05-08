@@ -1,0 +1,151 @@
+﻿@page
+@model FootballBooking.Web.Pages.Admin.ChatbotModel
+@{
+    ViewData["Title"] = "Chatbot tri thức JSON";
+}
+
+<div class="container py-4">
+    <section class="apple-hero mb-4">
+        <div class="container py-5">
+            <span class="apple-chip mb-3">Knowledge Chatbot</span>
+            <h1 class="display-6 fw-semibold mb-2">Chatbot đọc dữ liệu JSON</h1>
+            <p class="text-muted-light mb-0">Bot trả lời dựa trên tệp tri thức cục bộ, phù hợp cho FAQ nội bộ và hỗ trợ người dùng.</p>
+        </div>
+    </section>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card apple-panel h-100">
+                <div class="card-body">
+                    <h5 class="mb-3">Nguồn dữ liệu</h5>
+                    <p class="text-muted mb-2">File tri thức hiện tại:</p>
+                    <code>FootballBooking.Web/App_Data/chatbot_knowledge.json</code>
+                    <hr />
+                    <h6 class="mb-2">Gợi ý câu hỏi</h6>
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-primary text-start chatbot-suggestion" data-question="Làm sao để đặt sân?">Làm sao để đặt sân?</button>
+                        <button type="button" class="btn btn-outline-primary text-start chatbot-suggestion" data-question="Hệ thống kiểm tra trùng lịch thế nào?">Hệ thống kiểm tra trùng lịch thế nào?</button>
+                        <button type="button" class="btn btn-outline-primary text-start chatbot-suggestion" data-question="Admin có trả lời feedback không?">Admin có trả lời feedback không?</button>
+                        <button type="button" class="btn btn-outline-primary text-start chatbot-suggestion" data-question="Xem lịch sử đặt sân ở đâu?">Xem lịch sử đặt sân ở đâu?</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card apple-panel h-100">
+                <div class="card-body d-flex flex-column" style="min-height: 560px;">
+                    <div id="chatbotMessages" class="chatbot-messages flex-grow-1 mb-3">
+                        <div class="chatbot-message chatbot-message-bot">
+                            <div class="chatbot-bubble">
+                                Xin chào, mình là chatbot tri thức JSON. Bạn hãy nhập câu hỏi để bắt đầu.
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="chatbotForm" class="chatbot-input-row">
+                        <input id="chatbotQuestion"
+                               type="text"
+                               class="form-control"
+                               placeholder="Nhập câu hỏi..."
+                               maxlength="400"
+                               autocomplete="off" />
+                        <button id="chatbotSendButton" type="submit" class="btn btn-primary">Gửi</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (() => {
+            const form = document.getElementById('chatbotForm');
+            const input = document.getElementById('chatbotQuestion');
+            const sendButton = document.getElementById('chatbotSendButton');
+            const messagesContainer = document.getElementById('chatbotMessages');
+            const suggestionButtons = document.querySelectorAll('.chatbot-suggestion');
+
+            function appendMessage(type, text, suggestions) {
+                const wrapper = document.createElement('div');
+                wrapper.className = `chatbot-message ${type === 'user' ? 'chatbot-message-user' : 'chatbot-message-bot'}`;
+
+                const bubble = document.createElement('div');
+                bubble.className = 'chatbot-bubble';
+                bubble.textContent = text;
+                wrapper.appendChild(bubble);
+
+                if (Array.isArray(suggestions) && suggestions.length > 0) {
+                    const suggestionWrap = document.createElement('div');
+                    suggestionWrap.className = 'chatbot-suggestions';
+
+                    suggestions.slice(0, 3).forEach(item => {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'btn btn-sm btn-outline-primary';
+                        btn.textContent = item;
+                        btn.addEventListener('click', () => {
+                            input.value = item;
+                            form.dispatchEvent(new Event('submit', { cancelable: true }));
+                        });
+                        suggestionWrap.appendChild(btn);
+                    });
+
+                    wrapper.appendChild(suggestionWrap);
+                }
+
+                messagesContainer.appendChild(wrapper);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            async function sendQuestion(question) {
+                appendMessage('user', question);
+
+                input.disabled = true;
+                sendButton.disabled = true;
+
+                try {
+                    const response = await fetch('/api/chatbot/ask', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ question })
+                    });
+
+                    const data = await response.json();
+                    if (!response.ok || !data.success) {
+                        appendMessage('bot', data.message || 'Không thể xử lý câu hỏi lúc này.');
+                        return;
+                    }
+
+                    appendMessage('bot', data.answer, data.suggestions);
+                } catch (error) {
+                    appendMessage('bot', 'Không thể kết nối chatbot. Vui lòng thử lại.');
+                } finally {
+                    input.disabled = false;
+                    sendButton.disabled = false;
+                    input.focus();
+                }
+            }
+
+            form.addEventListener('submit', event => {
+                event.preventDefault();
+                const question = input.value.trim();
+                if (!question) {
+                    input.focus();
+                    return;
+                }
+
+                input.value = '';
+                sendQuestion(question);
+            });
+
+            suggestionButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    input.value = button.dataset.question || '';
+                    form.dispatchEvent(new Event('submit', { cancelable: true }));
+                });
+            });
+        })();
+    </script>
+}

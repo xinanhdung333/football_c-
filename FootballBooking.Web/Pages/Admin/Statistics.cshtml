@@ -1,0 +1,337 @@
+﻿@page "/admin/statistics"
+@model FootballBooking.Web.Pages.Admin.DashboardModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Thống kê quản trị";
+}
+
+<section class="apple-hero mb-5">
+    <div class="container py-5">
+        <div class="row g-4 align-items-end">
+            <div class="col-lg-8">
+                <span class="apple-chip mb-3">Dashboard analytics</span>
+                <h1 class="display-6 fw-semibold mb-3">Báo cáo chi tiết hệ thống đặt sân</h1>
+                <p class="mb-0 text-muted-light">Theo dõi doanh thu booking, doanh thu dịch vụ, trạng thái đơn và xu hướng theo tháng trong một màn hình thống nhất.</p>
+            </div>
+            <div class="col-lg-4">
+                <form method="get" class="apple-filter-panel">
+                    <label class="form-label">Từ ngày</label>
+                    <input type="date" name="fromDate" class="form-control mb-3" value="@Model.FromDate?.ToString("yyyy-MM-dd")" />
+                    <label class="form-label">Đến ngày</label>
+                    <input type="date" name="toDate" class="form-control mb-3" value="@Model.ToDate?.ToString("yyyy-MM-dd")" />
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary w-100">Lọc dữ liệu</button>
+                        <a asp-page="/Admin/Statistics" asp-page-handler="ExportReport" asp-route-fromDate="@Model.FromDate?.ToString("yyyy-MM-dd")" asp-route-toDate="@Model.ToDate?.ToString("yyyy-MM-dd")" class="btn btn-outline-primary w-100">Xuất CSV</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <div class="row g-3 mb-4">
+        <div class="col-lg-3 col-sm-6">
+            <div class="card apple-kpi-card">
+                <div class="card-body">
+                    <small class="text-uppercase text-muted">Người dùng</small>
+                    <h3 class="mb-1">@Model.TotalUsers</h3>
+                    <p class="mb-0 text-muted">Tài khoản hệ thống</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card apple-kpi-card">
+                <div class="card-body">
+                    <small class="text-uppercase text-muted">Sân bóng</small>
+                    <h3 class="mb-1">@Model.TotalFields</h3>
+                    <p class="mb-0 text-muted">Sân đang quản lý</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card apple-kpi-card">
+                <div class="card-body">
+                    <small class="text-uppercase text-muted">Dịch vụ</small>
+                    <h3 class="mb-1">@Model.TotalServices</h3>
+                    <p class="mb-0 text-muted">Sản phẩm và tiện ích</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card apple-kpi-card apple-kpi-accent">
+                <div class="card-body">
+                    <small class="text-uppercase">Tổng doanh thu</small>
+                    <h3 class="mb-1">@Model.Summary.TotalRevenue.ToString("C0")</h3>
+                    <p class="mb-0">Trong @Model.Summary.FromDate.ToString("dd/MM/yyyy") - @Model.Summary.ToDate.ToString("dd/MM/yyyy")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-lg-4">
+            <div class="card apple-kpi-card">
+                <div class="card-body">
+                    <small class="text-uppercase text-muted">Booking revenue</small>
+                    <h4 class="mb-1">@Model.Summary.BookingRevenue.ToString("C0")</h4>
+                    <p class="mb-0 text-muted">@Model.Summary.BookingCount lượt đặt sân</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card apple-kpi-card">
+                <div class="card-body">
+                    <small class="text-uppercase text-muted">Service revenue</small>
+                    <h4 class="mb-1">@Model.Summary.ServiceRevenue.ToString("C0")</h4>
+                    <p class="mb-0 text-muted">@Model.Summary.OrderCount đơn mua dịch vụ</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card apple-kpi-card">
+                <div class="card-body">
+                    <small class="text-uppercase text-muted">Tỷ trọng booking</small>
+                    @{
+                        var bookingRatio = Model.Summary.TotalRevenue <= 0 ? 0 : (Model.Summary.BookingRevenue / Model.Summary.TotalRevenue) * 100;
+                    }
+                    <h4 class="mb-1">@bookingRatio.ToString("N1")%</h4>
+                    <p class="mb-0 text-muted">Booking so với tổng doanh thu</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-xl-4">
+            <div class="card apple-panel h-100">
+                <div class="card-body">
+                    <h5 class="mb-3">Top sân theo lượt đặt</h5>
+                    @if (Model.Summary.TopFields.Any())
+                    {
+                        <ul class="apple-list">
+                            @foreach (var item in Model.Summary.TopFields)
+                            {
+                                <li>
+                                    <div>
+                                        <strong>@item.FieldName</strong>
+                                        <div class="text-muted small">@item.BookingCount lượt đặt</div>
+                                    </div>
+                                    <span>@item.Revenue.ToString("C0")</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">Không có dữ liệu trong khoảng thời gian này.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4">
+            <div class="card apple-panel h-100">
+                <div class="card-body">
+                    <h5 class="mb-3">Top dịch vụ theo số lượng</h5>
+                    @if (Model.Summary.TopServices.Any())
+                    {
+                        <ul class="apple-list">
+                            @foreach (var item in Model.Summary.TopServices)
+                            {
+                                <li>
+                                    <div>
+                                        <strong>@item.ServiceName</strong>
+                                        <div class="text-muted small">@item.Quantity sản phẩm</div>
+                                    </div>
+                                    <span>@item.Revenue.ToString("C0")</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">Không có dữ liệu trong khoảng thời gian này.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4">
+            <div class="card apple-panel h-100">
+                <div class="card-body">
+                    <h5 class="mb-3">Trạng thái booking</h5>
+                    @if (Model.Summary.BookingStatusCounts.Any())
+                    {
+                        <ul class="apple-list">
+                            @foreach (var status in Model.Summary.BookingStatusCounts.OrderByDescending(x => x.Value))
+                            {
+                                <li>
+                                    <strong>@status.Key</strong>
+                                    <span>@status.Value</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">Không có booking trong kỳ lọc.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+        <div class="col-xl-8">
+            <div class="card apple-panel h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">Biểu đồ doanh thu theo tháng</h5>
+                        <span class="text-muted small">12 tháng gần nhất</span>
+                    </div>
+                    <div class="apple-chart-shell apple-chart-shell-wide">
+                        <canvas id="monthlyRevenueChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4">
+            <div class="card apple-panel h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">Cơ cấu doanh thu</h5>
+                        <span class="text-muted small">Kỳ lọc hiện tại</span>
+                    </div>
+                    <div class="apple-chart-shell apple-chart-shell-square">
+                        <canvas id="revenueSplitChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card apple-panel mt-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Doanh thu 12 tháng gần nhất</h5>
+                <span class="text-muted small">Booking + dịch vụ</span>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Tháng</th>
+                            <th>Booking</th>
+                            <th>Dịch vụ</th>
+                            <th>Tổng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var month in Model.MonthlyRevenue)
+                    {
+                        <tr>
+                            <td>@month.Month</td>
+                            <td>@month.BookingRevenue.ToString("C0")</td>
+                            <td>@month.ServiceRevenue.ToString("C0")</td>
+                            <td class="fw-semibold">@month.TotalRevenue.ToString("C0")</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        (() => {
+            const monthlyData = @Html.Raw(JsonSerializer.Serialize(Model.MonthlyRevenue.Select(x => new {
+                month = x.Month,
+                booking = x.BookingRevenue,
+                service = x.ServiceRevenue,
+                total = x.TotalRevenue
+            })));
+
+            const summaryData = @Html.Raw(JsonSerializer.Serialize(new {
+                booking = Model.Summary.BookingRevenue,
+                service = Model.Summary.ServiceRevenue
+            }));
+
+            const monthlyChartElement = document.getElementById('monthlyRevenueChart');
+            if (monthlyChartElement && monthlyData.length > 0) {
+                new Chart(monthlyChartElement, {
+                    type: 'line',
+                    data: {
+                        labels: monthlyData.map(item => item.month),
+                        datasets: [
+                            {
+                                label: 'Booking',
+                                data: monthlyData.map(item => item.booking),
+                                borderColor: '#0071e3',
+                                backgroundColor: 'rgba(0, 113, 227, 0.1)',
+                                fill: true,
+                                tension: 0.3
+                            },
+                            {
+                                label: 'Dịch vụ',
+                                data: monthlyData.map(item => item.service),
+                                borderColor: '#1d1d1f',
+                                backgroundColor: 'rgba(29, 29, 31, 0.08)',
+                                fill: true,
+                                tension: 0.3
+                            },
+                            {
+                                label: 'Tổng',
+                                data: monthlyData.map(item => item.total),
+                                borderColor: '#2997ff',
+                                borderDash: [6, 4],
+                                fill: false,
+                                tension: 0.25
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    callback: value => new Intl.NumberFormat('vi-VN').format(value)
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const splitChartElement = document.getElementById('revenueSplitChart');
+            if (splitChartElement) {
+                new Chart(splitChartElement, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Booking', 'Dịch vụ'],
+                        datasets: [{
+                            data: [summaryData.booking, summaryData.service],
+                            backgroundColor: ['#0071e3', '#1d1d1f'],
+                            borderColor: ['#0071e3', '#1d1d1f'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            }
+        })();
+    </script>
+}

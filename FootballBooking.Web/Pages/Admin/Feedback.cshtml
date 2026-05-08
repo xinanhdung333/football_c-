@@ -1,0 +1,27 @@
+@page
+@model FootballBooking.Web.Pages.Admin.FeedbackModel
+@using FootballBooking.Models
+@{
+    ViewData["Title"] = "Quản lý Feedback";
+}
+
+<div class="container-fluid py-5">
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-0">Quản lý Feedback</h1>
+                <p class="text-muted mb-0">Xem và phản hồi ý kiến khách hàng.</p>
+            </div>
+            <div class="btn-group" role="group">
+                <a href="/Admin/Dashboard" class="btn btn-outline-info">Dashboard</a>
+                <a href="/Admin/Fields" class="btn btn-outline-secondary">Quản lý sân</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <p class="mb-0">Trang quản lý feedback sẽ tổng hợp đánh giá và yêu cầu từ khách hàng.</p>
+        </div>
+    </div>
+</div>

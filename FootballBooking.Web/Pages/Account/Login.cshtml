@@ -1,0 +1,62 @@
+@page
+@model FootballBooking.Web.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<div class="login-hero">
+    <div class="container login-panel">
+        <div class="row g-0 shadow-lg rounded-4 overflow-hidden bg-white login-card">
+            <div class="col-lg-5 login-aside d-none d-lg-flex flex-column justify-content-center p-5 text-white">
+                <div>
+                    <h2 class="mb-4">Chào mừng bạn trở lại</h2>
+                    <p class="mb-4">Đăng nhập để quản lý đặt sân, kiểm tra tình trạng đơn hàng và sử dụng dịch vụ ngay trong hệ thống Football Booking.</p>
+                    <ul class="list-unstyled text-white-75">
+                        <li class="mb-3"><i class="fas fa-check-circle me-2"></i>Giao diện hiện đại, trực quan</li>
+                        <li class="mb-3"><i class="fas fa-check-circle me-2"></i>Thanh toán nhanh chóng</li>
+                        <li><i class="fas fa-check-circle me-2"></i>Quản lý tài khoản dễ dàng</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-7 p-5">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h3 class="mb-1">Đăng nhập</h3>
+                        <p class="text-muted mb-0">Nhập email và mật khẩu của bạn để tiếp tục.</p>
+                    </div>
+                    <div class="text-end d-lg-none">
+                        <a href="/Account/Register" class="text-primary">Đăng ký</a>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="alert alert-danger rounded-4">
+                        @Model.ErrorMessage
+                    </div>
+                }
+
+                <form method="post" class="login-form">
+                    <div class="mb-4">
+                        <label for="Email" class="form-label">Email</label>
+                        <input type="email" class="form-control form-control-lg" id="Email" name="Email" value="@Model.Input.Email" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="Password" class="form-label">Mật khẩu</label>
+                        <input type="password" class="form-control form-control-lg" id="Password" name="Password" required />
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                            <i class="fas fa-sign-in-alt me-2"></i> Đăng nhập
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4">
+                    <span class="text-muted">Chưa có tài khoản?</span>
+                    <a href="/Account/Register" class="fw-semibold text-primary">Đăng ký ngay</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

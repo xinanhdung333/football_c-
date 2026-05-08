@@ -1,0 +1,28 @@
+@page
+@model RemoveFromCartModel
+@{
+    ViewData["Title"] = "Xóa khỏi giỏ hàng";
+}
+
+<div class="container py-5">
+    <h1 class="mb-4">Xóa sản phẩm khỏi giỏ hàng</h1>
+
+    @if (Model.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    @if (Model.SuccessMessage != null)
+    {
+        <div class="alert alert-success">
+            @Model.SuccessMessage
+        </div>
+    }
+
+    <div class="mt-3">
+        <a href="/UpdateCart" class="btn btn-primary">Quay lại giỏ hàng</a>
+        <a href="/" class="btn btn-secondary">Tiếp tục mua sắm</a>
+    </div>
+</div>

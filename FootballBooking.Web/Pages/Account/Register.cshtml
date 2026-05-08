@@ -1,0 +1,83 @@
+@page
+@model FootballBooking.Web.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "Đăng ký";
+}
+
+<div class="auth-hero">
+    <div class="container auth-panel">
+        <div class="row g-0 shadow-lg rounded-4 overflow-hidden auth-card">
+            <div class="col-lg-5 auth-aside d-none d-lg-flex flex-column justify-content-center p-5 text-white">
+                <div>
+                    <h2 class="mb-4">Bắt đầu trải nghiệm</h2>
+                    <p class="mb-4">Tạo tài khoản ngay để quản lý đặt sân, mua dịch vụ và nhận ưu đãi nhanh chóng trên Football Booking.</p>
+                    <ul class="list-unstyled text-white-75 auth-features">
+                        <li class="mb-3"><i class="fas fa-check-circle me-2"></i>Đặt sân chỉ trong vài bước</li>
+                        <li class="mb-3"><i class="fas fa-check-circle me-2"></i>Quản lý lịch sử đặt sân dễ dàng</li>
+                        <li><i class="fas fa-check-circle me-2"></i>Ứng dụng thân thiện với di động</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-7 p-5">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h3 class="mb-1">Đăng ký</h3>
+                        <p class="text-muted mb-0">Nhập thông tin để tạo tài khoản mới.</p>
+                    </div>
+                    <div class="d-lg-none">
+                        <a href="/Account/Login" class="text-primary">Đăng nhập</a>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                {
+                    <div class="alert alert-danger rounded-4">
+                        @Model.ErrorMessage
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+                {
+                    <div class="alert alert-success rounded-4">
+                        @Model.SuccessMessage
+                    </div>
+                }
+
+                <form method="post" class="auth-form">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="Name" class="form-label">Họ tên</label>
+                            <input type="text" class="form-control form-control-lg" id="Name" name="Name" value="@Model.Input.Name" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="Phone" class="form-label">Số điện thoại</label>
+                            <input type="tel" class="form-control form-control-lg" id="Phone" name="Phone" value="@Model.Input.Phone" required />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Email" class="form-label">Email</label>
+                        <input type="email" class="form-control form-control-lg" id="Email" name="Email" value="@Model.Input.Email" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Password" class="form-label">Mật khẩu</label>
+                        <input type="password" class="form-control form-control-lg" id="Password" name="Password" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="ConfirmPassword" class="form-label">Xác nhận mật khẩu</label>
+                        <input type="password" class="form-control form-control-lg" id="ConfirmPassword" name="ConfirmPassword" required />
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                            <i class="fas fa-user-plus me-2"></i> Đăng ký
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4">
+                    <span class="text-muted">Đã có tài khoản?</span>
+                    <a href="/Account/Login" class="fw-semibold text-primary">Đăng nhập ngay</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

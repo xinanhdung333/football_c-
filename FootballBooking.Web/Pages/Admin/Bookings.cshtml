@@ -1,0 +1,27 @@
+@page
+@model FootballBooking.Web.Pages.Admin.BookingsModel
+@using FootballBooking.Models
+@{
+    ViewData["Title"] = "Quản lý đặt sân";
+}
+
+<div class="container-fluid py-5">
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-0">Quản lý đặt sân</h1>
+                <p class="text-muted mb-0">Theo dõi và xử lý đơn đặt sân của khách hàng.</p>
+            </div>
+            <div class="btn-group" role="group">
+                <a href="/Admin/Dashboard" class="btn btn-outline-info">Dashboard</a>
+                <a href="/Admin/Fields" class="btn btn-outline-secondary">Quản lý sân</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <p class="mb-0">Chức năng quản lý đặt sân sẽ được mở rộng tại đây. Bạn có thể xem danh sách, xác nhận hoặc huỷ đơn đặt.</p>
+        </div>
+    </div>
+</div>

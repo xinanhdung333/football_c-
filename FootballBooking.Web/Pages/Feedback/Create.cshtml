@@ -1,0 +1,78 @@
+@page
+@model FootballBooking.Web.Pages.Feedback.CreateModel
+@{
+    ViewData["Title"] = "Đánh giá sân";
+}
+
+<div class="container-fluid py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h3 class="mb-0">Đánh giá sân</h3>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.StatusMessage))
+                    {
+                        <div class="alert alert-success">@Model.StatusMessage</div>
+                    }
+
+                    <form method="post" class="needs-validation">
+                        <input type="hidden" asp-for="BookingId" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Sân: @Model.BookingField?.Name</label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Đánh giá sao</label>
+                            <div class="star-rating">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <input type="radio" id="star@i" name="Rating" value="@i" />
+                                    <label for="star@i" class="star">
+                                        <i class="fas fa-star"></i>
+                                    </label>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Bình luận</label>
+                            <textarea asp-for="Comment" class="form-control" rows="4" placeholder="Chia sẻ trải nghiệm của bạn..."></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="/Account/Profile" class="btn btn-outline-secondary">Hủy</a>
+                            <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.star-rating {
+    display: flex;
+    justify-content: center;
+    font-size: 2rem;
+    gap: 0.5rem;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star {
+    cursor: pointer;
+    color: #ddd;
+    transition: color 0.2s;
+}
+
+.star:hover,
+.star-rating input:checked ~ .star {
+    color: #ffc107;
+}
+</style>

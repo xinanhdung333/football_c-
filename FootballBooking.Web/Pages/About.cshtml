@@ -1,0 +1,167 @@
+@page
+@model AboutModel
+@{
+    ViewData["Title"] = "Về chúng tôi";
+}
+
+<div class="container py-5">
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <h1 class="display-4 fw-bold mb-4">Về Football Booking</h1>
+            <p class="lead text-muted">Nền tảng đặt sân bóng đá trực tuyến hàng đầu Việt Nam</p>
+        </div>
+    </div>
+
+    <!-- Mission Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-5">
+                    <h2 class="mb-4">
+                        <i class="fas fa-target text-primary"></i> Sứ mệnh của chúng tôi
+                    </h2>
+                    <p class="fs-5">
+                        Football Booking được thành lập với mục tiêu cung cấp giải pháp đặt sân bóng đá 
+                        dễ dàng, nhanh chóng và an toàn cho người yêu thích bóng đá tại Việt Nam. 
+                        Chúng tôi kết nối các sân bóng chất lượng cao với những người cần đặt sân một cách hiệu quả nhất.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <h2 class="mb-4">Tại sao chọn chúng tôi?</h2>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-clock text-success"></i> Đặt sân nhanh chóng
+                            </h5>
+                            <p class="card-text">
+                                Giao diện đơn giản, chỉ cần vài click là hoàn thành đặt sân yêu thích.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-shield-alt text-info"></i> An toàn & Bảo mật
+                            </h5>
+                            <p class="card-text">
+                                Hệ thống thanh toán an toàn với các phương thức đa dạng.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-star text-warning"></i> Sân chất lượng cao
+                            </h5>
+                            <p class="card-text">
+                                Tất cả sân được kiểm duyệt kỹ lưỡng, đảm bảo chất lượng tốt nhất.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-headset text-danger"></i> Hỗ trợ 24/7
+                            </h5>
+                            <p class="card-text">
+                                Đội ngũ hỗ trợ khách hàng lúc nào cũng sẵn sàng giúp đỡ bạn.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="bg-light rounded p-5">
+                <h2 class="mb-4 text-center">Những con số ấn tượng</h2>
+                <div class="row text-center g-4">
+                    <div class="col-md-3">
+                        <h3 class="text-primary fw-bold">@Model.TotalFields+</h3>
+                        <p class="text-muted">Sân bóng</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h3 class="text-primary fw-bold">@Model.TotalUsers+</h3>
+                        <p class="text-muted">Người dùng</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h3 class="text-primary fw-bold">@Model.TotalBookings+</h3>
+                        <p class="text-muted">Đặt sân</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h3 class="text-primary fw-bold">4.8/5</h3>
+                        <p class="text-muted">Đánh giá</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-5">
+                    <h2 class="mb-4">Liên hệ với chúng tôi</h2>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <p>
+                                <i class="fas fa-map-marker-alt text-primary me-3"></i>
+                                <strong>Địa chỉ:</strong><br/>
+                                123 Đường ABC, Thành phố HCM, Việt Nam
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                <i class="fas fa-phone text-primary me-3"></i>
+                                <strong>Hotline:</strong><br/>
+                                +84 (0) 123 456 789
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                <i class="fas fa-envelope text-primary me-3"></i>
+                                <strong>Email:</strong><br/>
+                                support@footballbooking.vn
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                <i class="fas fa-clock text-primary me-3"></i>
+                                <strong>Giờ làm việc:</strong><br/>
+                                7:00 - 22:00 (Hàng ngày)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+</style>

@@ -1,0 +1,123 @@
+@page
+@model FootballBooking.Web.Pages.Bookings.DetailsModel
+@using FootballBooking.Models
+@{
+    ViewData["Title"] = "Chi tiết đặt sân";
+}
+
+<div class="container-fluid py-5">
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-0">Chi tiết đặt sân</h1>
+                <p class="text-muted mb-0">Xem lại thông tin đặt sân của bạn.</p>
+            </div>
+            <a href="/Account/Profile" class="btn btn-outline-secondary">Quay lại hồ sơ</a>
+        </div>
+    </div>
+
+    @if (Model.Booking == null)
+    {
+        <div class="alert alert-warning">Đặt sân không tồn tại hoặc bạn không có quyền truy cập.</div>
+    }
+    else
+    {
+        @if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+        {
+            <div class="alert alert-success">@Model.StatusMessage</div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="alert alert-danger">@Model.ErrorMessage</div>
+        }
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Mã đặt sân: #@Model.Booking.Id</h5>
+                        <p class="text-muted mb-1">Sân: @Model.Field?.Name</p>
+                        <p class="text-muted mb-1">Địa chỉ: @Model.Field?.Location</p>
+                        <p class="text-muted mb-0">Trạng thái: <span class="badge bg-info">@Model.Booking.Status</span></p>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h5 class="mb-0">Thông tin đặt sân</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Ngày đặt:</strong> @Model.Booking.BookingDate.ToString("dd/MM/yyyy")</p>
+                                <p><strong>Giờ bắt đầu:</strong> @Model.Booking.StartTime.ToString(@"hh\:mm")</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Giờ kết thúc:</strong> @Model.Booking.EndTime.ToString(@"hh\:mm")</p>
+                                <p><strong>Thời lượng:</strong> @Model.Booking.DurationHours giờ</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <p><strong>Ghi chú:</strong> @(string.IsNullOrEmpty(Model.Booking.Note) ? "Không có" : Model.Booking.Note)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Giá tiền</h5>
+                        <p class="display-6 fw-bold">@Model.Booking.TotalPrice.ToString("C")</p>
+                        <small class="text-muted">@Model.Field?.PricePerHour.ToString("C")/giờ</small>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Thanh toan booking</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.LatestPayment != null)
+                        {
+                            <p class="mb-1"><strong>Phuong thuc:</strong> @Model.LatestPayment.PaymentMethod</p>
+                            <p class="mb-1"><strong>So tien:</strong> @Model.LatestPayment.Amount.ToString("C")</p>
+                            <p class="mb-3"><strong>Trang thai:</strong> <span class="badge bg-@(Model.LatestPayment.Status == PaymentStatus.Success ? "success" : "warning")">@Model.LatestPayment.Status</span></p>
+                        }
+                        else
+                        {
+                            <p class="text-muted">Booking nay chua co thanh toan.</p>
+                        }
+
+                        @if (Model.LatestPayment?.Status != PaymentStatus.Success && Model.Booking.Status != BookingStatus.Cancelled && Model.Booking.Status != BookingStatus.Expired)
+                        {
+                            <form method="post" asp-page-handler="PayCash" asp-route-bookingId="@Model.Booking.Id" class="d-grid mb-2">
+                                <button type="submit" class="btn btn-success">Xac nhan tien mat</button>
+                            </form>
+                            <form method="post" asp-page-handler="PayMomo" asp-route-bookingId="@Model.Booking.Id" class="d-grid">
+                                <button type="submit" class="btn btn-outline-danger">Tao giao dich MoMo</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+
+                @if (Model.Booking.Status == BookingStatus.Completed)
+                {
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-body">
+                            <a href="/Bookings/ExportInvoice/@Model.Booking.Id" class="btn btn-success w-100 mb-2" target="_blank">
+                                <i class="fas fa-download me-1"></i> Xuất hóa đơn PDF
+                            </a>
+                            <a href="/Feedback/Create?bookingId=@Model.Booking.Id" class="btn btn-primary w-100">
+                                <i class="fas fa-star-half-alt me-1"></i> Đánh giá sân
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,17 @@
+C:\c#football_booking\FootballBooking.BLL\bin\Release\net10.0\FootballBooking.BLL.deps.json
+C:\c#football_booking\FootballBooking.BLL\bin\Release\net10.0\FootballBooking.BLL.dll
+C:\c#football_booking\FootballBooking.BLL\bin\Release\net10.0\FootballBooking.BLL.pdb
+C:\c#football_booking\FootballBooking.BLL\bin\Release\net10.0\FootballBooking.DAL.dll
+C:\c#football_booking\FootballBooking.BLL\bin\Release\net10.0\FootballBooking.Models.dll
+C:\c#football_booking\FootballBooking.BLL\bin\Release\net10.0\FootballBooking.DAL.pdb
+C:\c#football_booking\FootballBooking.BLL\bin\Release\net10.0\FootballBooking.Models.pdb
+C:\c#football_booking\FootballBooking.BLL\obj\Release\net10.0\FootballBooking.BLL.csproj.AssemblyReference.cache
+C:\c#football_booking\FootballBooking.BLL\obj\Release\net10.0\FootballBooking.BLL.GeneratedMSBuildEditorConfig.editorconfig
+C:\c#football_booking\FootballBooking.BLL\obj\Release\net10.0\FootballBooking.BLL.AssemblyInfoInputs.cache
+C:\c#football_booking\FootballBooking.BLL\obj\Release\net10.0\FootballBooking.BLL.AssemblyInfo.cs
+C:\c#football_booking\FootballBooking.BLL\obj\Release\net10.0\FootballBooking.BLL.csproj.CoreCompileInputs.cache
+C:\c#football_booking\FootballBooking.BLL\obj\Release\net10.0\Football.268103EE.Up2Date
+C:\c#football_booking\FootballBooking.BLL\obj\Release\net10.0\FootballBooking.BLL.dll
+C:\c#football_booking\FootballBooking.BLL\obj\Release\net10.0\refint\FootballBooking.BLL.dll
+C:\c#football_booking\FootballBooking.BLL\obj\Release\net10.0\FootballBooking.BLL.pdb
+C:\c#football_booking\FootballBooking.BLL\obj\Release\net10.0\ref\FootballBooking.BLL.dll

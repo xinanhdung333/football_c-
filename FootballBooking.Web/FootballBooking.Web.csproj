@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\FootballBooking.BLL\FootballBooking.BLL.csproj" />
+    <ProjectReference Include="..\FootballBooking.DAL\FootballBooking.DAL.csproj" />
+    <ProjectReference Include="..\FootballBooking.Models\FootballBooking.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="itext7" Version="9.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="App_Data\chatbot_knowledge.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+</Project>

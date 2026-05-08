@@ -1,0 +1,175 @@
+﻿@page
+@model FootballBooking.Web.Pages.Admin.ManageFeedbacksModel
+@using FootballBooking.Web.ViewModels
+@{
+    ViewData["Title"] = "Quản lý phản hồi";
+}
+
+<div class="container py-4">
+    <section class="apple-hero mb-4">
+        <div class="container py-5">
+            <span class="apple-chip mb-3">Feedback Center</span>
+            <h1 class="display-6 fw-semibold mb-2">Quản lý phản hồi người dùng</h1>
+            <p class="text-muted-light mb-0">Theo dõi đánh giá và trả lời trực tiếp từ admin/boss.</p>
+        </div>
+    </section>
+
+    @if (!string.IsNullOrEmpty(Model.StatusMessage))
+    {
+        <div class="alert alert-info">@Model.StatusMessage</div>
+    }
+
+    <section class="card apple-panel">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Người dùng</th>
+                            <th>Liên quan</th>
+                            <th>Nội dung</th>
+                            <th>Đánh giá</th>
+                            <th>Phản hồi admin</th>
+                            <th>Ngày tạo</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var feedback in Model.Feedbacks)
+                        {
+                            <tr>
+                                <td>@feedback.Id</td>
+                                <td>
+                                    <div class="fw-semibold">@feedback.UserFullName</div>
+                                    <small class="text-muted">@feedback.UserUsername</small>
+                                </td>
+                                <td>
+                                    <div>@(feedback.BookingId.HasValue ? $"Booking #{feedback.BookingId}" : "-")</div>
+                                    <div>@(feedback.ServiceId.HasValue ? $"Service #{feedback.ServiceId}" : "-")</div>
+                                </td>
+                                <td>
+                                    <span title="@feedback.Message">
+                                        @(feedback.Message.Length > 80 ? feedback.Message[..80] + "..." : feedback.Message)
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        @for (var i = 1; i <= 5; i++)
+                                        {
+                                            <i class="fas fa-star @(i <= feedback.Rating ? "text-warning" : "text-muted")"></i>
+                                        }
+                                        <span class="ms-2">@feedback.Rating/5</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(feedback.ReplyMessage))
+                                    {
+                                        <span class="badge text-bg-success mb-1">Đã phản hồi</span>
+                                        <div class="small text-muted" title="@feedback.ReplyMessage">
+                                            @(feedback.ReplyMessage!.Length > 60 ? feedback.ReplyMessage[..60] + "..." : feedback.ReplyMessage)
+                                        </div>
+                                        @if (feedback.RepliedAt.HasValue)
+                                        {
+                                            <div class="small text-muted">@feedback.RepliedAt.Value.ToString("dd/MM/yyyy HH:mm")</div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="badge text-bg-secondary">Chưa phản hồi</span>
+                                    }
+                                </td>
+                                <td>@feedback.CreatedAt?.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#replyFeedbackModal"
+                                                onclick="openReplyModal(@feedback.Id, '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(feedback.UserFullName))', '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(feedback.Message))', '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(feedback.ReplyMessage ?? string.Empty))')">
+                                            <i class="fas fa-reply"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#deleteFeedbackModal"
+                                                onclick="deleteFeedback(@feedback.Id)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="modal fade" id="replyFeedbackModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="ReplyFeedback">
+                <input type="hidden" name="FeedbackId" id="replyFeedbackId" />
+                <div class="modal-header">
+                    <h5 class="modal-title">Phản hồi người dùng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Người gửi feedback</label>
+                        <div id="replyUserName" class="text-muted"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Nội dung feedback</label>
+                        <div id="replySourceMessage" class="p-3 rounded border bg-light"></div>
+                    </div>
+                    <div class="mb-0">
+                        <label class="form-label fw-semibold">Phản hồi của admin</label>
+                        <textarea name="ReplyMessage" id="replyMessageInput" class="form-control" rows="4" maxlength="1000" required></textarea>
+                        <div class="form-text">Tối đa 1000 ký tự.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Gửi phản hồi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteFeedbackModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="DeleteFeedback">
+                <input type="hidden" name="FeedbackId" id="deleteFeedbackId" />
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận xóa feedback</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">Bạn có chắc chắn muốn xóa feedback này?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function deleteFeedback(id) {
+            document.getElementById('deleteFeedbackId').value = id;
+        }
+
+        function openReplyModal(id, userName, feedbackMessage, currentReply) {
+            document.getElementById('replyFeedbackId').value = id;
+            document.getElementById('replyUserName').textContent = userName;
+            document.getElementById('replySourceMessage').textContent = feedbackMessage;
+            document.getElementById('replyMessageInput').value = currentReply || '';
+        }
+    </script>
+}

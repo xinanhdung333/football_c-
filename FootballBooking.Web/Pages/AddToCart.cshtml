@@ -1,0 +1,66 @@
+@page
+@model AddToCartModel
+@{
+    ViewData["Title"] = "Thêm vào giỏ hàng";
+}
+
+<div class="container py-5">
+    <h1 class="mb-4">Thêm dịch vụ vào giỏ hàng</h1>
+
+    @if (Model.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    @if (Model.SuccessMessage != null)
+    {
+        <div class="alert alert-success">
+            @Model.SuccessMessage
+        </div>
+    }
+
+    @if (Model.Service != null)
+    {
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>@Model.Service.Name</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Giá:</strong> @Model.Service.Price.ToString("C")</p>
+                        <p><strong>Còn lại:</strong> @Model.Service.Quantity</p>
+                        <p>@Model.Service.Description</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Thêm vào giỏ hàng</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            <div class="mb-3">
+                                <label for="quantity" class="form-label">Số lượng</label>
+                                <input type="number" class="form-control" id="quantity" name="Quantity"
+                                       min="1" max="@Model.Service.Quantity" value="1" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
+                            <a href="/Services/Detail/@Model.Service.Id" class="btn btn-secondary">Quay lại</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">
+            Dịch vụ không tồn tại.
+        </div>
+    }
+</div>

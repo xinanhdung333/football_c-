@@ -1,0 +1,143 @@
+@page "{serviceId}"
+@model DetailModel
+@{
+    ViewData["Title"] = Model.Service?.Name ?? "Chi tiết dịch vụ";
+}
+
+<div class="container py-5">
+    @if (Model.Service == null)
+    {
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-circle"></i> Dịch vụ không tồn tại hoặc đã được xóa.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <!-- Service Image -->
+            <div class="col-lg-6 mb-4">
+                @if (!string.IsNullOrEmpty(Model.Service.Image))
+                {
+                    <img src="@Model.Service.Image" alt="@Model.Service.Name" class="img-fluid rounded shadow">
+                }
+                else
+                {
+                    <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 400px;">
+                        <i class="fas fa-image" style="font-size: 100px; color: #ccc;"></i>
+                    </div>
+                }
+            </div>
+
+            <!-- Service Details -->
+            <div class="col-lg-6">
+                <h1 class="mb-3">@Model.Service.Name</h1>
+
+                <!-- Price -->
+                <div class="mb-4">
+                    <h3 class="text-primary">
+                        @Model.Service.Price.ToString("C")
+                    </h3>
+                    <span class="badge bg-success">Còn hàng: @Model.Service.Quantity</span>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-4">
+                    <h5>Mô tả</h5>
+                    <p class="fs-5">@Model.Service.Description</p>
+                </div>
+
+                <!-- Add to Cart -->
+                <div class="mb-4">
+                    <label for="quantity" class="form-label">Số lượng:</label>
+                    <div class="input-group" style="width: 200px;">
+                        <button class="btn btn-outline-secondary" type="button" id="decreaseBtn">-</button>
+                        <input type="number" id="quantity" class="form-control text-center" value="1" min="1" max="@Model.Service.Quantity">
+                        <button class="btn btn-outline-secondary" type="button" id="increaseBtn">+</button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="gap-2 d-flex">
+                    <button class="btn btn-primary btn-lg flex-grow-1" onclick="addToCart()">
+                        <i class="fas fa-shopping-cart"></i> Thêm vào giỏ hàng
+                    </button>
+                    <a href="/" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+
+                <!-- Reviews Section -->
+                @if (Model.Reviews?.Any() == true)
+                {
+                    <div class="mt-5 pt-5 border-top">
+                        <h5 class="mb-4">Đánh giá từ khách hàng</h5>
+                        @foreach (var review in Model.Reviews)
+                        {
+                            <div class="mb-3 pb-3 border-bottom">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1">@review.UserName</h6>
+                                        <div class="text-warning mb-2">
+                                            @for (int i = 0; i < review.Rating; i++)
+                                            {
+                                                <i class="fas fa-star"></i>
+                                            }
+                                            @for (int i = review.Rating; i < 5; i++)
+                                            {
+                                                <i class="far fa-star"></i>
+                                            }
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">@review.CreatedAt?.ToString("dd/MM/yyyy")</small>
+                                </div>
+                                <p class="mb-0">@review.Message</p>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<script>
+    document.getElementById('decreaseBtn').addEventListener('click', function () {
+        const qty = document.getElementById('quantity');
+        if (qty.value > 1) qty.value = parseInt(qty.value) - 1;
+    });
+
+    document.getElementById('increaseBtn').addEventListener('click', function () {
+        const qty = document.getElementById('quantity');
+        const max = parseInt(document.getElementById('quantity').max);
+        if (parseInt(qty.value) < max) qty.value = parseInt(qty.value) + 1;
+    });
+
+    function addToCart() {
+        const quantity = parseInt(document.getElementById('quantity').value);
+        const serviceId = @(Model.Service?.Id ?? 0);
+
+        fetch('/api/cart/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                serviceId: serviceId,
+                quantity: quantity
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Đã thêm vào giỏ hàng!');
+                window.location.href = '/';
+            } else {
+                alert('Lỗi: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra!');
+        });
+    }
+</script>

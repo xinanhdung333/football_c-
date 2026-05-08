@@ -1,0 +1,191 @@
+@page "{fieldId}"
+@model ScheduleModel
+@{
+    ViewData["Title"] = "Lịch tức thời sân bóng";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <h1 class="mb-4">
+                <i class="fas fa-calendar-alt"></i> Lịch tức thời - @Model.Field?.Name
+            </h1>
+
+            <!-- Date Selection -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <label for="bookingDate" class="form-label">Chọn ngày:</label>
+                    <input type="date" id="bookingDate" class="form-control" style="width: 200px;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Schedule Table -->
+        <div class="col-lg-9">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clock"></i> Thời gian có sẵn
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Thời gian</th>
+                                    <th>Trạng thái</th>
+                                    <th>Giá</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scheduleBody">
+                                @for (int hour = 7; hour < 22; hour++)
+                                {
+                                    <tr>
+                                        <td>@hour:00 - @(hour + 1):00</td>
+                                        <td>
+                                            <span class="badge bg-success">Còn sẵn</span>
+                                        </td>
+                                        <td class="fw-bold text-primary">
+                                            @Model.Field?.PricePerHour.ToString("C")
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary" onclick="selectSlot(@hour)">
+                                                <i class="fas fa-check"></i> Chọn
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Form -->
+        <div class="col-lg-3">
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-credit-card"></i> Thông tin đặt sân
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Sân:</label>
+                        <p class="mb-0">@Model.Field?.Name</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Ngày:</label>
+                        <p class="mb-0" id="selectedDate">-</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Thời gian:</label>
+                        <p class="mb-0" id="selectedTime">-</p>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Giá tiền:</label>
+                        <h4 class="text-primary" id="selectedPrice">-</h4>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="note" class="form-label">Ghi chú:</label>
+                        <textarea class="form-control" id="note" rows="3" placeholder="Ghi chú thêm (tuỳ chọn)"></textarea>
+                    </div>
+
+                    <button class="btn btn-primary w-100" onclick="completeBooking()">
+                        <i class="fas fa-check-circle"></i> Xác nhận đặt sân
+                    </button>
+                    <a href="/" class="btn btn-outline-secondary w-100 mt-2">
+                        <i class="fas fa-times"></i> Hủy
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .sticky-top {
+        z-index: 100;
+    }
+</style>
+
+<script>
+    let selectedHour = null;
+    const fieldId = @Model.Field?.Id;
+    const pricePerHour = @Model.Field?.PricePerHour;
+
+    document.getElementById('bookingDate').addEventListener('change', function () {
+        document.getElementById('selectedDate').textContent = formatDate(this.value);
+    });
+
+    // Set today as default
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('bookingDate').value = today;
+    document.getElementById('selectedDate').textContent = formatDate(today);
+
+    function formatDate(dateStr) {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('vi-VN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    function selectSlot(hour) {
+        selectedHour = hour;
+        document.getElementById('selectedTime').textContent = `${hour}:00 - ${hour + 1}:00`;
+        document.getElementById('selectedPrice').textContent = pricePerHour.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+
+        // Highlight selected slot
+        document.querySelectorAll('tbody tr').forEach((tr, idx) => {
+            if (idx === hour - 7) {
+                tr.classList.add('table-active');
+            } else {
+                tr.classList.remove('table-active');
+            }
+        });
+    }
+
+    function completeBooking() {
+        if (!selectedHour) {
+            alert('Vui lòng chọn thời gian!');
+            return;
+        }
+
+        const bookingDate = document.getElementById('bookingDate').value;
+        const note = document.getElementById('note').value;
+
+        const startTime = `${String(selectedHour).padStart(2, '0')}:00:00`;
+        const endTime = `${String(selectedHour + 1).padStart(2, '0')}:00:00`;
+
+        fetch('/api/bookings/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                fieldId: fieldId,
+                bookingDate: bookingDate,
+                startTime: startTime,
+                endTime: endTime,
+                note: note
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Đặt sân thành công!');
+                window.location.href = '/Account/Profile';
+            } else {
+                alert('Lỗi: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra!');
+        });
+    }
+</script>

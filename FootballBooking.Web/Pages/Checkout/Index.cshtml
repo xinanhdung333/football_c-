@@ -1,0 +1,143 @@
+@page
+@model FootballBooking.Web.Pages.Checkout.IndexModel
+@{
+    ViewData["Title"] = "Thanh toán";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                    <li class="breadcrumb-item active">Thanh toán</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-shopping-cart"></i> Giỏ hàng của bạn</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.CartItems.Any())
+                    {
+                        @foreach (var item in Model.CartItems)
+                        {
+                            var service = Model.Services.FirstOrDefault(s => s.Id == item.ServiceId);
+                            if (service != null)
+                            {
+                                <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+                                    <div class="d-flex align-items-center">
+                                        @if (!string.IsNullOrEmpty(service.Image))
+                                        {
+                                            <img src="@service.Image" alt="@service.Name" class="me-3" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                                        }
+                                        else
+                                        {
+                                            <div class="me-3 d-flex align-items-center justify-content-center bg-light" style="width: 60px; height: 60px; border-radius: 8px;">
+                                                <i class="fas fa-utensils text-muted"></i>
+                                            </div>
+                                        }
+                                        <div>
+                                            <h6 class="mb-1">@service.Name</h6>
+                                            <p class="text-muted small mb-1">@service.Description</p>
+                                            <span class="badge bg-secondary">@item.Quantity x @item.Price.ToString("C")</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="h6 mb-0">@((item.Quantity * item.Price).ToString("C"))</span>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                            <h5>Giỏ hàng trống</h5>
+                            <p class="text-muted">Không có sản phẩm nào để thanh toán</p>
+                            <a href="/" class="btn btn-primary">Quay lại mua hàng</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        @if (Model.CartItems.Any())
+        {
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-credit-card"></i> Thông tin thanh toán</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                        {
+                            <div class="alert alert-danger">
+                                @Model.ErrorMessage
+                            </div>
+                        }
+
+                        <form method="post">
+                            <div class="mb-3">
+                                <label class="form-label">Phương thức thanh toán</label>
+                                <select class="form-select" name="PaymentMethod" required>
+                                    <option value="">Chọn phương thức</option>
+                                    <option value="Tiền mặt">💵 Tiền mặt</option>
+                                    <option value="Ví MoMo">📱 Ví MoMo</option>
+                                </select>
+                            </div>
+
+                            <hr>
+
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Tạm tính:</span>
+                                <span>@Model.Subtotal.ToString("C")</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Thuế (0%):</span>
+                                <span>0đ</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Phí vận chuyển:</span>
+                                <span>Miễn phí</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between mb-3">
+                                <strong class="h5">Tổng cộng:</strong>
+                                <strong class="h5 text-primary">@Model.Total.ToString("C")</strong>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="fas fa-check-circle"></i> Xác nhận thanh toán
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h6 class="card-title">Thông tin giao hàng</h6>
+                        <div class="mb-2">
+                            <strong>@Model.CurrentUser?.Name</strong>
+                        </div>
+                        <div class="mb-2">
+                            <i class="fas fa-phone"></i> @Model.CurrentUser?.Phone
+                        </div>
+                        <div class="mb-2">
+                            <i class="fas fa-envelope"></i> @Model.CurrentUser?.Email
+                        </div>
+                        <small class="text-muted">Giao hàng tận nơi trong vòng 30 phút</small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

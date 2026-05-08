@@ -1,0 +1,101 @@
+@page "/Cart"
+@model UpdateCartModel
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<div class="container py-4">
+    <section class="apple-hero mb-4">
+        <div class="container py-5">
+            <span class="apple-chip mb-3">Cart</span>
+            <h1 class="display-6 fw-semibold mb-2">Giỏ hàng của bạn</h1>
+            <p class="text-muted-light mb-0">Cập nhật số lượng dịch vụ và chuyển sang checkout khi sẵn sàng.</p>
+        </div>
+    </section>
+
+    @if (Model.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+
+    @if (Model.SuccessMessage != null)
+    {
+        <div class="alert alert-success">@Model.SuccessMessage</div>
+    }
+
+    @if (Model.CartItems.Any())
+    {
+        <section class="card apple-panel">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">Danh sách dịch vụ</h5>
+                    <span class="badge text-bg-primary">@Model.CartItems.Count() mục</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Dịch vụ</th>
+                                <th>Số lượng</th>
+                                <th>Giá</th>
+                                <th>Thành tiền</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.CartItems)
+                            {
+                                <tr>
+                                    <td class="fw-semibold">@item.ServiceName</td>
+                                    <td>
+                                        <form method="post" class="d-flex align-items-center gap-2">
+                                            <input type="hidden" name="cartItemId" value="@item.Id" />
+                                            <input type="number"
+                                                   name="quantity"
+                                                   value="@item.Quantity"
+                                                   min="1"
+                                                   max="99"
+                                                   class="form-control"
+                                                   style="max-width: 96px;" />
+                                            <button type="submit" class="btn btn-sm btn-primary">Cập nhật</button>
+                                        </form>
+                                    </td>
+                                    <td>@item.Price.ToString("C0")</td>
+                                    <td class="fw-semibold">@((item.Quantity * item.Price).ToString("C0"))</td>
+                                    <td>
+                                        <form method="post" asp-page-handler="Remove" class="d-inline">
+                                            <input type="hidden" name="cartItemId" value="@item.Id" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Xóa</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mt-4">
+                    <div>
+                        <div class="text-muted">Tổng thanh toán</div>
+                        <h4 class="mb-0">@Model.CartTotal.ToString("C0")</h4>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="/" class="btn btn-outline-primary">Tiếp tục mua</a>
+                        <a href="/Checkout/Index" class="btn btn-primary">Thanh toán</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+    else
+    {
+        <section class="card apple-panel">
+            <div class="card-body text-center py-5">
+                <h5 class="mb-2">Giỏ hàng đang trống</h5>
+                <p class="text-muted mb-3">Hãy chọn thêm dịch vụ trước khi thanh toán.</p>
+                <a href="/Services" class="btn btn-primary">Xem dịch vụ</a>
+            </div>
+        </section>
+    }
+</div>

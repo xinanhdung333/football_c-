@@ -1,0 +1,96 @@
+@page
+@model FootballBooking.Web.Pages.Admin.InvoicesModel
+@using FootballBooking.Models
+@{
+    ViewData["Title"] = "Quản lý hóa đơn";
+}
+
+<div class="container-fluid py-5">
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-0">Quản lý hóa đơn</h1>
+                <p class="text-muted mb-0">Xem danh sách hóa đơn đặt sân, tìm kiếm nhanh và xuất báo cáo Excel.</p>
+            </div>
+            <div class="btn-group" role="group">
+                <a href="/Admin/Dashboard" class="btn btn-outline-info">Dashboard</a>
+                <a href="/Admin/Orders" class="btn btn-outline-secondary">Chi tiết mua hàng</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <input id="invoiceSearch" type="text" class="form-control" placeholder="Tìm kiếm theo khách hàng, sân, trạng thái..." />
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a asp-page="./Invoices" asp-page-handler="ExportExcel" class="btn btn-success">
+                        <i class="fas fa-file-excel me-2"></i>Xuất Excel (.csv)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" id="invoiceTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Khách hàng</th>
+                            <th>Email</th>
+                            <th>Sân</th>
+                            <th>Ngày đặt</th>
+                            <th>Giờ bắt đầu</th>
+                            <th>Giờ kết thúc</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var booking in Model.Bookings)
+                        {
+                            <tr>
+                                <td>@booking.Id</td>
+                                <td>@booking.UserName</td>
+                                <td>@booking.UserEmail</td>
+                                <td>@booking.FieldName</td>
+                                <td>@booking.BookingDate.ToString("dd/MM/yyyy")</td>
+                                <td>@booking.StartTime.ToString(@"hh\:mm")</td>
+                                <td>@booking.EndTime.ToString(@"hh\:mm")</td>
+                                <td>@booking.TotalAmount.ToString("N0") VNĐ</td>
+                                <td>
+                                    <span class="badge @(booking.Status == BookingStatus.Confirmed ? "bg-success" : booking.Status == BookingStatus.Pending ? "bg-warning" : booking.Status == BookingStatus.Cancelled ? "bg-danger" : "bg-secondary")">
+                                        @booking.Status
+                                    </span>
+                                </td>
+                                <td>
+                                    <a class="btn btn-sm btn-outline-primary" href="/Bookings/ExportInvoice/@booking.Id" target="_blank">
+                                        <i class="fas fa-file-pdf me-1"></i>Xuất hóa đơn
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('invoiceSearch')?.addEventListener('input', function () {
+            const searchTerm = this.value.trim().toLowerCase();
+            document.querySelectorAll('#invoiceTable tbody tr').forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    </script>
+}

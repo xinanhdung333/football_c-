@@ -1,0 +1,255 @@
+@page
+@model FootballBooking.Web.Pages.ServicesModel
+@using FootballBooking.Models
+@{
+    ViewData["Title"] = "Dịch vụ & đồ ăn";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Dịch vụ</li>
+                </ol>
+            </nav>
+            <h1 class="display-5 fw-bold text-primary mb-2">
+                <i class="fas fa-utensils me-3"></i>Dịch vụ & đồ ăn
+            </h1>
+            <p class="lead text-muted">Chọn thêm đồ ăn, nước uống và phụ kiện kèm theo để trận đấu hoàn hảo.</p>
+        </div>
+    </div>
+
+    <!-- Cart Summary -->
+    @if (Model.CurrentUser != null)
+    {
+        <section class="mb-5">
+            <div class="card shadow-sm p-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="mb-1">Giỏ hàng nhanh</h4>
+                        <small class="text-muted">Tổng giá trị hiện tại</small>
+                    </div>
+                    <div class="text-end">
+                        <h3 class="fw-bold mb-0">@Model.CartTotal.ToString("C")</h3>
+                        <small class="text-muted">Tổng số lượng: @Model.CartItemCount</small>
+                    </div>
+                </div>
+                <div class="mt-4 d-flex justify-content-end">
+                    <a href="/Checkout" class="btn btn-primary">Thanh toán ngay</a>
+                </div>
+            </div>
+        </section>
+    }
+
+    <!-- Services Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4 class="mb-3">🍕 Danh sách dịch vụ</h4>
+
+            @if (Model.CurrentUser == null)
+            {
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Thông báo:</strong> Bạn cần <a href="/Account/Login" class="alert-link">đăng nhập</a> để thêm dịch vụ vào giỏ hàng.
+                </div>
+            }
+
+            <!-- Search and Filter -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <input type="text" id="serviceSearch" class="form-control" placeholder="Tìm kiếm dịch vụ...">
+                        </div>
+                        <div class="col-md-3">
+                            <select id="priceFilter" class="form-select">
+                                <option value="">Tất cả giá</option>
+                                <option value="0-50000">Dưới 50k</option>
+                                <option value="50000-100000">50k - 100k</option>
+                                <option value="100000-200000">100k - 200k</option>
+                                <option value="200000-999999">Trên 200k</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select id="sortBy" class="form-select">
+                                <option value="rating">Danh gia cao nhat</option>
+                                <option value="name">Sắp xếp theo tên</option>
+                                <option value="price-low">Giá thấp đến cao</option>
+                                <option value="price-high">Giá cao đến thấp</option>
+                                <option value="quantity">Còn nhiều nhất</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" id="servicesContainer">
+        @foreach (var service in Model.Services.Where(s => s.Status == ServiceStatus.Active))
+        {
+            var rating = Model.GetRatingSummary(service.Id);
+            var price = Model.GetPriceQuote(service);
+            <div class="col-lg-3 col-md-4 mb-4 service-item" data-name="@service.Name.ToLower()" data-price="@price.FinalPrice" data-quantity="@service.Quantity" data-rating="@rating.Average">
+                <div class="card h-100 shadow-sm">
+                    <a href="/Services/Detail/@service.Id" class="text-decoration-none text-dark">
+                        @if (!string.IsNullOrEmpty(service.Image))
+                        {
+                            <img src="@service.Image" class="card-img-top" alt="@service.Name" style="height: 150px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 150px;">
+                                <i class="fas fa-utensils fa-2x text-muted"></i>
+                            </div>
+                        }
+                        <div class="card-body">
+                            <h6 class="card-title">@service.Name</h6>
+                            <p class="card-text small text-truncate-2">@service.Description</p>
+                            <div class="small text-warning mb-2">
+                                <i class="fas fa-star"></i>
+                                <span class="text-dark">@rating.Average.ToString("0.0")</span>
+                                <span class="text-muted">(@rating.Count)</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h6 text-success mb-0">@price.FinalPrice.ToString("C")</span>
+                                <small class="text-muted">Còn @service.Quantity</small>
+                            </div>
+                            @if (price.DiscountPercent > 0)
+                            {
+                                <div class="small mt-1">
+                                    <span class="text-muted text-decoration-line-through">@price.OriginalPrice.ToString("C")</span>
+                                    <span class="badge bg-danger ms-1">-@price.DiscountPercent.ToString("0")%</span>
+                                </div>
+                            }
+                        </div>
+                    </a>
+                    <div class="card-footer">
+                        @if (Model.CurrentUser != null)
+                        {
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-success btn-sm" onclick="addToCart(@service.Id)">
+                                    <i class="fas fa-cart-plus"></i> Thêm vào giỏ
+                                </button>
+                                <a class="btn btn-outline-primary btn-sm" href="/Services/Detail/@service.Id">
+                                    <i class="fas fa-info-circle"></i> Xem chi tiết
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <button class="btn btn-outline-success btn-sm w-100" onclick="window.location.href='/Account/Login'">
+                                <i class="fas fa-sign-in-alt"></i> Đăng nhập để mua
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Service filtering and sorting functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('serviceSearch');
+            const priceFilter = document.getElementById('priceFilter');
+            const sortBy = document.getElementById('sortBy');
+            const servicesContainer = document.getElementById('servicesContainer');
+
+            function filterAndSortServices() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const priceRange = priceFilter.value;
+                const sortOption = sortBy.value;
+
+                const serviceItems = Array.from(document.querySelectorAll('.service-item'));
+
+                // Filter services
+                const filteredItems = serviceItems.filter(item => {
+                    const name = item.dataset.name;
+                    const price = parseFloat(item.dataset.price);
+                    const quantity = parseInt(item.dataset.quantity);
+
+                    // Search filter
+                    const matchesSearch = name.includes(searchTerm);
+
+                    // Price filter
+                    let matchesPrice = true;
+                    if (priceRange) {
+                        const [min, max] = priceRange.split('-').map(Number);
+                        matchesPrice = price >= min && (max ? price <= max : true);
+                    }
+
+                    return matchesSearch && matchesPrice && quantity > 0;
+                });
+
+                // Sort services
+                filteredItems.sort((a, b) => {
+                    const aPrice = parseFloat(a.dataset.price);
+                    const bPrice = parseFloat(b.dataset.price);
+                    const aQuantity = parseInt(a.dataset.quantity);
+                    const bQuantity = parseInt(b.dataset.quantity);
+                    const aRating = parseFloat(a.dataset.rating);
+                    const bRating = parseFloat(b.dataset.rating);
+                    const aName = a.dataset.name;
+                    const bName = b.dataset.name;
+
+                    switch (sortOption) {
+                        case 'price-low':
+                            return aPrice - bPrice;
+                        case 'price-high':
+                            return bPrice - aPrice;
+                        case 'rating':
+                            return bRating - aRating || aName.localeCompare(bName);
+                        case 'quantity':
+                            return bQuantity - aQuantity;
+                        case 'name':
+                        default:
+                            return aName.localeCompare(bName);
+                    }
+                });
+
+                // Hide all items first
+                serviceItems.forEach(item => item.style.display = 'none');
+
+                // Show filtered and sorted items
+                filteredItems.forEach(item => item.style.display = 'block');
+
+                // Reorder DOM elements
+                filteredItems.forEach(item => {
+                    servicesContainer.appendChild(item);
+                });
+            }
+
+            // Add event listeners
+            searchInput.addEventListener('input', filterAndSortServices);
+            priceFilter.addEventListener('change', filterAndSortServices);
+            sortBy.addEventListener('change', filterAndSortServices);
+
+            // Initial filter
+            filterAndSortServices();
+        });
+
+        function addToCart(serviceId) {
+            fetch('/AddToCart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ serviceId: serviceId, quantity: 1 })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Lỗi: ' + data.message);
+                }
+            });
+        }
+    </script>
+}

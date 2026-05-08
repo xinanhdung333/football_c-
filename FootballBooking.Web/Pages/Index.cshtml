@@ -1,0 +1,195 @@
+﻿@page "{handler?}"
+@model IndexModel
+@using FootballBooking.Models
+@{
+    ViewData["Title"] = "Football Booking - Trang chủ";
+}
+
+<section class="apple-hero mb-5">
+    <div class="container py-5">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+                <span class="apple-chip mb-3">Football Booking</span>
+                <h1 class="display-5 fw-semibold mb-3">Đặt sân nhanh, quản lý lịch thông minh</h1>
+                <p class="lead text-muted-light mb-4">Chọn sân, chọn khung giờ và thanh toán dịch vụ trong một luồng liền mạch. Giao diện tối giản, tốc độ nhanh, dữ liệu realtime.</p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="#fieldsSection" class="btn btn-primary btn-lg">Đặt sân ngay</a>
+                    <a href="/Services" class="btn btn-outline-light btn-lg">Xem dịch vụ</a>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="card apple-panel">
+                    <div class="card-body">
+                        <h5 class="mb-3">Tổng quan nhanh</h5>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="apple-mini-metric">
+                                    <strong>@Model.Fields.Count()</strong>
+                                    <span>Sân bóng</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="apple-mini-metric">
+                                    <strong>@Model.CartItemCount</strong>
+                                    <span>Giỏ hàng</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="apple-mini-metric">
+                                    <strong>@Model.BookingCount</strong>
+                                    <span>Lượt đặt</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="apple-mini-metric">
+                                    <strong>@Model.CartTotal.ToString("C0")</strong>
+                                    <span>Tổng dịch vụ</span>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="/Account/Profile" class="btn btn-primary w-100 mt-3">Lịch sử của tôi</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <section id="fieldsSection" class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h2 class="section-title mb-1">Danh sách sân bóng</h2>
+                <p class="section-subtitle mb-0">Giá rõ ràng, trạng thái trực quan, đặt lịch ngay trên trang chủ.</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var field in Model.Fields)
+            {
+                <div class="col-lg-4 col-md-6">
+                    <article class="card apple-field-card h-100">
+                        @if (!string.IsNullOrWhiteSpace(field.Image))
+                        {
+                            <img src="@field.Image" class="card-img-top" alt="@field.Name" />
+                        }
+                        else
+                        {
+                            <div class="apple-placeholder d-flex align-items-center justify-content-center">
+                                <i class="fas fa-futbol fa-2x"></i>
+                            </div>
+                        }
+
+                        <div class="card-body">
+                            <h5 class="card-title mb-1">@field.Name</h5>
+                            <p class="text-muted small mb-2">@field.Location</p>
+                            <p class="card-text text-muted">@field.Description</p>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <strong>@field.PricePerHour.ToString("C0")/giờ</strong>
+                                <span class="badge @(field.Status == FieldStatus.Active ? "text-bg-success" : "text-bg-secondary")">@field.Status</span>
+                            </div>
+                        </div>
+                        @if (Model.CurrentUser != null)
+                        {
+                            <div class="card-footer bg-transparent border-0 pt-0 pb-3 px-3">
+                                <button class="btn btn-primary w-100" onclick="bookField(@field.Id, '@field.Name')">Đặt sân</button>
+                            </div>
+                        }
+                    </article>
+                </div>
+            }
+        </div>
+    </section>
+
+    <section class="card apple-panel mb-5">
+        <div class="card-body d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+            <div>
+                <h4 class="mb-1">Giỏ hàng nhanh</h4>
+                <p class="mb-0 text-muted">@Model.CartItemCount sản phẩm • Tổng @Model.CartTotal.ToString("C0")</p>
+            </div>
+            <a class="btn btn-primary" href="/Checkout/Index">Thanh toán ngay</a>
+        </div>
+    </section>
+</div>
+
+<div class="modal fade" id="bookingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Đặt sân: <span id="fieldName"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="bookingForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="selectedFieldId" name="Input.FieldId" />
+                    <div class="mb-3">
+                        <label class="form-label">Ngày đặt</label>
+                        <input type="date" class="form-control" id="bookingDate" name="Input.BookingDate" required />
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <label class="form-label">Giờ bắt đầu</label>
+                            <input type="time" class="form-control" id="startTime" name="Input.StartTime" required />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Giờ kết thúc</label>
+                            <input type="time" class="form-control" id="endTime" name="Input.EndTime" required />
+                        </div>
+                    </div>
+                    <div class="mb-3 mt-3">
+                        <label class="form-label">Ghi chú</label>
+                        <textarea class="form-control" id="bookingNote" name="Input.Note" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" onclick="submitBooking()">Đặt sân</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function bookField(fieldId, fieldName) {
+            document.getElementById('selectedFieldId').value = fieldId;
+            document.getElementById('fieldName').textContent = fieldName;
+            new bootstrap.Modal(document.getElementById('bookingModal')).show();
+        }
+
+        function submitBooking() {
+            const form = document.getElementById('bookingForm');
+            const formData = new FormData(form);
+
+            fetch('/BookField', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                    return null;
+                }
+                return response.text();
+            })
+            .then(html => {
+                if (!html) return;
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const error = doc.querySelector('.alert-danger');
+                const success = doc.querySelector('.alert-success');
+                if (success) {
+                    alert(success.textContent.trim());
+                    bootstrap.Modal.getInstance(document.getElementById('bookingModal')).hide();
+                    location.reload();
+                } else if (error) {
+                    alert('Lỗi: ' + error.textContent.trim());
+                } else {
+                    location.reload();
+                }
+            });
+        }
+    </script>
+}

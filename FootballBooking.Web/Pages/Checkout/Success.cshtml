@@ -1,0 +1,100 @@
+@page
+@model FootballBooking.Web.Pages.Checkout.SuccessModel
+@{
+    ViewData["Title"] = "Thanh toán thành công";
+}
+
+<div class="container-fluid py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-6">
+            <div class="card shadow">
+                <div class="card-body text-center p-5">
+                    <!-- Success Icon -->
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                    </div>
+
+                    <!-- Success Message -->
+                    <h2 class="card-title text-success mb-3">Thanh toán thành công!</h2>
+                    <p class="card-text text-muted mb-4">
+                        Cảm ơn bạn đã đặt sân. Đơn hàng của bạn đã được xử lý thành công.
+                    </p>
+
+                    <!-- Order Details -->
+                    @if (Model.Order != null)
+                    {
+                        <div class="row justify-content-center mb-4">
+                            <div class="col-md-8">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Chi tiết đơn hàng</h5>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <strong>Mã đơn hàng:</strong>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                @Model.Order.Id
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <strong>Tổng tiền:</strong>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                @Model.Order.TotalAmount.ToString("N0") VND
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <strong>Phương thức thanh toán:</strong>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                @Model.Order.PaymentMethod
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <strong>Trạng thái:</strong>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <span class="badge bg-success">Đã thanh toán</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <a href="/" class="btn btn-primary btn-lg me-md-2">
+                            <i class="fas fa-home me-2"></i>Quay về trang chủ
+                        </a>
+                        <a href="/Account/Profile" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-user me-2"></i>Xem lịch sử đặt sân
+                        </a>
+                    </div>
+
+                    <!-- Additional Info -->
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Bạn sẽ nhận được thông tin xác nhận qua email trong vòng 24 giờ.
+                            Nếu có thắc mắc, vui lòng liên hệ hotline: 1900-xxxx
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Auto redirect after 10 seconds
+        setTimeout(function() {
+            window.location.href = '/';
+        }, 10000);
+    </script>
+}

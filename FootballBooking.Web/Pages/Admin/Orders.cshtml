@@ -1,0 +1,101 @@
+@page
+@model FootballBooking.Web.Pages.Admin.OrdersModel
+@using FootballBooking.Models
+@using System.Linq
+@{
+    ViewData["Title"] = "Chi tiết mua hàng";
+}
+
+<div class="container-fluid py-5">
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-0">Chi tiết mua hàng</h1>
+                <p class="text-muted mb-0">Kiểm tra đơn dịch vụ, tìm kiếm nhanh và xuất báo cáo Excel.</p>
+            </div>
+            <div class="btn-group" role="group">
+                <a href="/Admin/Dashboard" class="btn btn-outline-info">Dashboard</a>
+                <a href="/Admin/Inventory" class="btn btn-outline-secondary">Kho dịch vụ</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <input id="orderSearch" type="text" class="form-control" placeholder="Tìm kiếm theo khách hàng, phương thức, trạng thái..." />
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a asp-page="./Orders" asp-page-handler="ExportExcel" class="btn btn-success">
+                        <i class="fas fa-file-excel me-2"></i>Xuất Excel (.csv)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" id="orderTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Khách hàng</th>
+                            <th>Email</th>
+                            <th>Tổng tiền</th>
+                            <th>Phương thức</th>
+                            <th>Trạng thái</th>
+                            <th>Ngày tạo</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.Orders)
+                        {
+                            <tr>
+                                <td>@order.Id</td>
+                                <td>@order.UserName</td>
+                                <td>@order.UserEmail</td>
+                                <td>@order.TotalAmount.ToString("N0") VNĐ</td>
+                                <td>@order.PaymentMethod</td>
+                                <td>
+                                    <span class="badge @(order.Status == OrderStatus.Confirmed ? "bg-success" : order.Status == OrderStatus.Pending ? "bg-warning" : order.Status == OrderStatus.Cancelled ? "bg-danger" : "bg-secondary")">
+                                        @order.Status
+                                    </span>
+                                </td>
+                                <td>@order.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    <form method="post" asp-page-handler="UpdateStatus" asp-route-orderId="@order.Id" class="d-flex gap-2 align-items-center mb-0">
+                                        <select name="status" class="form-select form-select-sm" style="min-width: 160px;">
+                                            @foreach (var statusOption in Enum.GetValues(typeof(OrderStatus)).Cast<OrderStatus>())
+                                            {
+                                                <option value="@statusOption" selected="@(statusOption == order.Status ? "selected" : null)">@statusOption</option>
+                                            }
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-outline-success">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('orderSearch')?.addEventListener('input', function () {
+            const searchTerm = this.value.trim().toLowerCase();
+            document.querySelectorAll('#orderTable tbody tr').forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+    </script>
+}

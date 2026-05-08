@@ -1,0 +1,55 @@
+﻿@page
+@model FootballBooking.Web.Pages.Admin.DashboardModel
+@{
+    ViewData["Title"] = "Dashboard quản trị";
+}
+
+<div class="container py-4">
+    <section class="apple-hero mb-4">
+        <div class="container py-5">
+            <span class="apple-chip mb-3">Admin Dashboard</span>
+            <h1 class="display-6 fw-semibold mb-3">Tổng quan nhanh hệ thống</h1>
+            <p class="text-muted-light mb-4">Trang này hiển thị KPI rút gọn. Báo cáo chi tiết, biểu đồ và xuất CSV nằm tại trang Statistics.</p>
+            <a class="btn btn-light" href="/admin/statistics">Mở trang Statistics</a>
+        </div>
+    </section>
+
+    <div class="row g-3">
+        <div class="col-lg-3 col-sm-6">
+            <div class="card apple-kpi-card">
+                <div class="card-body">
+                    <small class="text-uppercase text-muted">Người dùng</small>
+                    <h3 class="mb-1">@Model.TotalUsers</h3>
+                    <p class="mb-0 text-muted">Tổng tài khoản</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card apple-kpi-card">
+                <div class="card-body">
+                    <small class="text-uppercase text-muted">Sân bóng</small>
+                    <h3 class="mb-1">@Model.TotalFields</h3>
+                    <p class="mb-0 text-muted">Tổng sân</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card apple-kpi-card">
+                <div class="card-body">
+                    <small class="text-uppercase text-muted">Dịch vụ</small>
+                    <h3 class="mb-1">@Model.TotalServices</h3>
+                    <p class="mb-0 text-muted">Tổng dịch vụ</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-6">
+            <div class="card apple-kpi-card apple-kpi-accent">
+                <div class="card-body">
+                    <small class="text-uppercase">Doanh thu kỳ lọc</small>
+                    <h3 class="mb-1">@Model.Summary.TotalRevenue.ToString("C0")</h3>
+                    <p class="mb-0">@Model.Summary.FromDate.ToString("dd/MM/yyyy") - @Model.Summary.ToDate.ToString("dd/MM/yyyy")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

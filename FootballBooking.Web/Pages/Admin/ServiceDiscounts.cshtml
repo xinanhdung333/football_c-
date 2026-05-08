@@ -1,0 +1,106 @@
+@page
+@model FootballBooking.Web.Pages.Admin.ServiceDiscountsModel
+@{
+    ViewData["Title"] = "Giam gia dich vu";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-1">Giam gia dich vu</h1>
+            <p class="text-muted mb-0">Tao rule flash sale theo khung gio cho tat ca dich vu hoac mot dich vu cu the.</p>
+        </div>
+        <a href="/Admin/ManageServices" class="btn btn-outline-secondary">Quan ly dich vu</a>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+    {
+        <div class="alert alert-info">@Model.StatusMessage</div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Tao rule moi</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-page-handler="Create">
+                        <div class="mb-3">
+                            <label class="form-label">Dich vu</label>
+                            <select class="form-select" asp-for="ServiceId">
+                                <option value="">Tat ca dich vu</option>
+                                @foreach (var service in Model.Services)
+                                {
+                                    <option value="@service.Id">@service.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Bat dau</label>
+                                <input class="form-control" asp-for="StartTime" type="time" required />
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label">Ket thuc</label>
+                                <input class="form-control" asp-for="EndTime" type="time" required />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Multiplier</label>
+                            <input class="form-control" asp-for="Multiplier" type="number" min="0.01" max="1" step="0.01" placeholder="0.8 = giam 20%" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ghi chu</label>
+                            <input class="form-control" asp-for="Note" maxlength="255" />
+                        </div>
+                        <button class="btn btn-primary w-100" type="submit">Luu rule</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Rule hien co</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Dich vu</th>
+                                <th>Khung gio</th>
+                                <th>Giam</th>
+                                <th>Ghi chu</th>
+                                <th>Trang thai</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var discount in Model.Discounts)
+                            {
+                                <tr>
+                                    <td>@Model.GetServiceName(discount.ServiceId)</td>
+                                    <td>@discount.StartTime.ToString(@"hh\:mm") - @discount.EndTime.ToString(@"hh\:mm")</td>
+                                    <td>@discount.DiscountPercent.ToString("0")%</td>
+                                    <td>@discount.Note</td>
+                                    <td>
+                                        <span class="badge @(discount.IsActive ? "bg-success" : "bg-secondary")">
+                                            @(discount.IsActive ? "Active" : "Inactive")
+                                        </span>
+                                    </td>
+                                    <td class="text-end">
+                                        <form method="post" asp-page-handler="Delete" asp-route-id="@discount.Id" onsubmit="return confirm('Xoa rule giam gia nay?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Xoa</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

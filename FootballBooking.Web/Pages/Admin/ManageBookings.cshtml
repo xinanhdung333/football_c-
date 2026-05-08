@@ -1,0 +1,161 @@
+@page
+@model FootballBooking.Web.Pages.Admin.ManageBookingsModel
+@using FootballBooking.Web.ViewModels
+@{
+    ViewData["Title"] = "Quản lý đặt sân";
+}
+
+<div class="container-fluid py-5">
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-0">Quản lý đặt sân</h1>
+                <p class="text-muted mb-0">Xem và quản lý các đơn đặt sân.</p>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.StatusMessage))
+    {
+        <div class="alert alert-success">@Model.StatusMessage</div>
+    }
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-6">
+                    <input id="bookingSearch" type="text" class="form-control" placeholder="Tìm kiếm đặt sân theo người dùng, sân, trạng thái..." />
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a asp-page="./ManageBookings" asp-page-handler="ExportExcel" class="btn btn-success">
+                        <i class="fas fa-file-excel me-2"></i>Xuất Excel (.csv)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" id="bookingTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Người dùng</th>
+                            <th>Sân bóng</th>
+                            <th>Ngày đặt</th>
+                            <th>Giờ bắt đầu</th>
+                            <th>Giờ kết thúc</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var booking in Model.Bookings)
+                        {
+                            <tr>
+                                <td>@booking.Id</td>
+                                <td>@booking.UserFullName (@booking.UserUsername)</td>
+                                <td>@booking.FieldName</td>
+                                <td>@booking.BookingDate?.ToString("dd/MM/yyyy")</td>
+                                <td>@booking.StartTime?.ToString(@"hh\:mm")</td>
+                                <td>@booking.EndTime?.ToString(@"hh\:mm")</td>
+                                <td>@booking.TotalAmount?.ToString("N0") VNĐ</td>
+                                <td>
+                                    <span class="badge @(booking.Status == FootballBooking.Models.BookingStatus.Confirmed ? "bg-success" : booking.Status == FootballBooking.Models.BookingStatus.Pending ? "bg-warning" : booking.Status == FootballBooking.Models.BookingStatus.Cancelled ? "bg-danger" : "bg-secondary")">@booking.Status</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a class="btn btn-sm btn-outline-success" href="/Bookings/ExportInvoice/@booking.Id" target="_blank">
+                                            <i class="fas fa-file-pdf me-1"></i>Hoá đơn
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editBookingModal" onclick="editBooking(@booking.Id, '@booking.Status')">
+                                            <i class="fas fa-edit"></i> Sửa
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteBookingModal" onclick="deleteBooking(@booking.Id)">
+                                            <i class="fas fa-trash"></i> Xóa
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Booking Modal -->
+<div class="modal fade" id="editBookingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="UpdateBooking">
+                <input type="hidden" name="BookingId" id="editBookingId" />
+                <div class="modal-header">
+                    <h5 class="modal-title">Chỉnh sửa trạng thái đặt sân</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Trạng thái</label>
+                        <select class="form-select" name="Status" id="editStatus">
+                            <option value="Pending">Chờ xác nhận</option>
+                            <option value="Confirmed">Đã xác nhận</option>
+                            <option value="Cancelled">Đã hủy</option>
+                            <option value="Completed">Hoàn thành</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Booking Modal -->
+<div class="modal fade" id="deleteBookingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" asp-page-handler="DeleteBooking">
+                <input type="hidden" name="BookingId" id="deleteBookingId" />
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận xóa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn xóa đơn đặt sân này?</p>
+                    <p class="text-danger">Hành động này không thể hoàn tác.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function editBooking(id, status) {
+        document.getElementById('editBookingId').value = id;
+        document.getElementById('editStatus').value = status;
+    }
+
+    function deleteBooking(id) {
+        document.getElementById('deleteBookingId').value = id;
+    }
+
+    document.getElementById('bookingSearch')?.addEventListener('input', function () {
+        const searchTerm = this.value.trim().toLowerCase();
+        document.querySelectorAll('#bookingTable tbody tr').forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+</script>

@@ -1,0 +1,61 @@
+{
+  "defaultAnswer": "Mình chưa có thông tin chính xác cho câu hỏi này. Bạn thử hỏi theo các chủ đề: đặt sân, thanh toán, hủy lịch, dịch vụ, feedback.",
+  "entries": [
+    {
+      "id": "booking_create",
+      "question": "Làm sao để đặt sân?",
+      "keywords": ["đặt sân", "book sân", "đặt lịch", "booking", "chọn giờ"],
+      "answer": "Bạn vào Trang chủ, chọn sân, bấm \"Đặt sân\", chọn ngày/giờ bắt đầu - kết thúc, thêm ghi chú (nếu cần) rồi xác nhận.",
+      "suggestions": ["Làm sao kiểm tra trùng lịch?", "Có thể hủy lịch đặt sân không?", "Xem sân đã đặt ở đâu?"]
+    },
+    {
+      "id": "booking_conflict",
+      "question": "Hệ thống kiểm tra trùng lịch thế nào?",
+      "keywords": ["trùng lịch", "xung đột", "conflict", "khung giờ"],
+      "answer": "Hệ thống tự kiểm tra xung đột theo sân, ngày và khung giờ. Nếu bị trùng, yêu cầu đặt sân sẽ không được tạo.",
+      "suggestions": ["Làm sao để đặt sân?", "Tôi xem lịch đã đặt ở đâu?"]
+    },
+    {
+      "id": "booking_history",
+      "question": "Xem lịch sử đặt sân ở đâu?",
+      "keywords": ["lịch sử đặt sân", "sân đã đặt", "bookings", "profile"],
+      "answer": "Bạn vào menu tài khoản và chọn \"Sân đã đặt\" hoặc vào trang Profile để xem toàn bộ lịch sử booking.",
+      "suggestions": ["Có thể xuất hóa đơn booking không?", "Tôi muốn gửi feedback cho sân đã đá."]
+    },
+    {
+      "id": "service_purchase",
+      "question": "Mua dịch vụ như thế nào?",
+      "keywords": ["mua dịch vụ", "giỏ hàng", "cart", "dịch vụ", "checkout"],
+      "answer": "Bạn vào trang Dịch vụ, bấm thêm vào giỏ, chỉnh số lượng tại trang Giỏ hàng, sau đó bấm Thanh toán để tạo đơn.",
+      "suggestions": ["Tôi cập nhật số lượng giỏ hàng ở đâu?", "Xem đơn hàng dịch vụ ở đâu?"]
+    },
+    {
+      "id": "payment_methods",
+      "question": "Có những phương thức thanh toán nào?",
+      "keywords": ["thanh toán", "payment", "momo", "tiền mặt", "chuyển khoản"],
+      "answer": "Hệ thống hỗ trợ các trạng thái thanh toán và có luồng xử lý cho phương thức thanh toán đã chọn khi checkout.",
+      "suggestions": ["Thanh toán xong xem đơn ở đâu?", "Làm sao xuất hóa đơn?"]
+    },
+    {
+      "id": "feedback_flow",
+      "question": "Gửi feedback ở đâu?",
+      "keywords": ["feedback", "đánh giá", "phản hồi", "sao"],
+      "answer": "Bạn có thể gửi feedback từ trang Feedback hoặc từ khu vực tài khoản sau khi đã sử dụng dịch vụ/đặt sân.",
+      "suggestions": ["Admin có phản hồi feedback không?", "Xem feedback cũ ở đâu?"]
+    },
+    {
+      "id": "feedback_reply",
+      "question": "Admin có trả lời feedback không?",
+      "keywords": ["admin trả lời", "reply feedback", "phản hồi từ admin", "rep feedback"],
+      "answer": "Có. Admin/Boss có thể trả lời feedback trong trang quản trị feedback. Người dùng xem phản hồi tại tab Feedback trong Profile.",
+      "suggestions": ["Xem feedback ở đâu?", "Sân đã đặt ở đâu?"]
+    },
+    {
+      "id": "admin_manage",
+      "question": "Admin quản lý những gì?",
+      "keywords": ["admin", "quản trị", "manage", "dashboard", "thống kê"],
+      "answer": "Admin có thể quản lý người dùng, sân, đặt sân, dịch vụ, feedback, đơn hàng, hóa đơn và xem thống kê doanh thu.",
+      "suggestions": ["Xem thống kê ở đâu?", "Export CSV thế nào?"]
+    }
+  ]
+}

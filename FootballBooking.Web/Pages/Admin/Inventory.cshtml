@@ -1,0 +1,64 @@
+@page
+@model FootballBooking.Web.Pages.Admin.InventoryModel
+@using FootballBooking.Models
+@{
+    ViewData["Title"] = "Quản lý kho";
+}
+
+<div class="container-fluid py-5">
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 mb-0">Quản lý kho dịch vụ</h1>
+                <p class="text-muted mb-0">Cập nhật số lượng và kiểm tra tồn kho.</p>
+            </div>
+            <div class="btn-group" role="group">
+                <a href="/Admin/Dashboard" class="btn btn-outline-info">Dashboard</a>
+                <a href="/" class="btn btn-outline-secondary">Trang chủ</a>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.StatusMessage))
+    {
+        <div class="alert alert-success">@Model.StatusMessage</div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Tên dịch vụ</th>
+                            <th>Giá</th>
+                            <th>Số lượng</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var service in Model.Services)
+                        {
+                            <tr>
+                                <td>@service.Id</td>
+                                <td>@service.Name</td>
+                                <td>@service.Price.ToString("C")</td>
+                                <td>
+                                    <form method="post" class="d-flex align-items-center gap-2">
+                                        <input type="hidden" name="ServiceId" value="@service.Id" />
+                                        <input type="number" min="0" class="form-control form-control-sm" name="Quantity" value="@service.Quantity" />
+                                        <button type="submit" class="btn btn-sm btn-success">Cập nhật</button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <span class="badge @(service.Quantity > 0 ? "bg-success" : "bg-danger")">@service.Quantity</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
