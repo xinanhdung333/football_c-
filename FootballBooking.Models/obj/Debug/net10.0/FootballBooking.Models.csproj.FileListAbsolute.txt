@@ -19,3 +19,15 @@ C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\e8ebfc4c506c58ab\FootballBookin
 C:\c#football_booking\FootballBooking.Models\bin\Verify\FootballBooking.Models.deps.json
 C:\c#football_booking\FootballBooking.Models\bin\Verify\FootballBooking.Models.dll
 C:\c#football_booking\FootballBooking.Models\bin\Verify\FootballBooking.Models.pdb
+C:\football_c-\FootballBooking.Models\bin\Debug\net10.0\FootballBooking.Models.deps.json
+C:\football_c-\FootballBooking.Models\bin\Debug\net10.0\FootballBooking.Models.dll
+C:\football_c-\FootballBooking.Models\bin\Debug\net10.0\FootballBooking.Models.pdb
+C:\football_c-\FootballBooking.Models\obj\Debug\net10.0\FootballBooking.Models.GeneratedMSBuildEditorConfig.editorconfig
+C:\football_c-\FootballBooking.Models\obj\Debug\net10.0\FootballBooking.Models.AssemblyInfoInputs.cache
+C:\football_c-\FootballBooking.Models\obj\Debug\net10.0\FootballBooking.Models.AssemblyInfo.cs
+C:\football_c-\FootballBooking.Models\obj\Debug\net10.0\FootballBooking.Models.csproj.CoreCompileInputs.cache
+C:\football_c-\FootballBooking.Models\obj\Debug\net10.0\FootballBooking.Models.sourcelink.json
+C:\football_c-\FootballBooking.Models\obj\Debug\net10.0\FootballBooking.Models.dll
+C:\football_c-\FootballBooking.Models\obj\Debug\net10.0\refint\FootballBooking.Models.dll
+C:\football_c-\FootballBooking.Models\obj\Debug\net10.0\FootballBooking.Models.pdb
+C:\football_c-\FootballBooking.Models\obj\Debug\net10.0\ref\FootballBooking.Models.dll

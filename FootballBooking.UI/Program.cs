@@ -27,11 +27,13 @@ static class Program
                 services.AddScoped<CartRepository>();
                 services.AddScoped<OrderRepository>();
                 services.AddScoped<PaymentRepository>();
+                services.AddScoped<ServiceDiscountRepository>();
 
                 services.AddScoped<AuthenticationService>();
                 services.AddScoped<FieldManagementService>();
                 services.AddScoped<ServiceInventoryService>();
                 services.AddScoped<BookingService>();
+                services.AddScoped<ServiceDiscountService>();
                 services.AddScoped<CartService>();
                 services.AddScoped<CheckoutService>();
 

@@ -11,6 +11,7 @@ public partial class MainForm : Form
     private BookingService _bookingService = null!;
     private CartService _cartService = null!;
     private ServiceInventoryService _serviceService = null!;
+    private ServiceDiscountService _discountService = null!;
     private IServiceProvider _serviceProvider = null!;
 
     public MainForm()
@@ -23,12 +24,14 @@ public partial class MainForm : Form
         BookingService bookingService,
         CartService cartService,
         ServiceInventoryService serviceService,
+        ServiceDiscountService discountService,
         IServiceProvider serviceProvider) : this()
     {
         _fieldService = fieldService;
         _bookingService = bookingService;
         _cartService = cartService;
         _serviceService = serviceService;
+        _discountService = discountService;
         _serviceProvider = serviceProvider;
 
         LoadFields();
@@ -68,10 +71,13 @@ public partial class MainForm : Form
 
             foreach (var service in services.Where(s => s.Status == ServiceStatus.Active))
             {
+                var quote = await _discountService.GetPriceQuoteAsync(service);
                 var item = new ListViewItem(service.Id.ToString());
                 item.SubItems.Add(service.Name);
                 item.SubItems.Add(service.Description ?? "");
                 item.SubItems.Add(service.Price.ToString("C"));
+                item.SubItems.Add(quote.FinalPrice.ToString("C"));
+                item.SubItems.Add(quote.DiscountPercent > 0 ? $"{quote.DiscountPercent:0}%" : "");
                 item.SubItems.Add(service.Quantity.ToString());
                 listViewServices.Items.Add(item);
             }

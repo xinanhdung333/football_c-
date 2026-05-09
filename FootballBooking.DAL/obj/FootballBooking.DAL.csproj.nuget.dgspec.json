@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\c#football_booking\\FootballBooking.DAL\\FootballBooking.DAL.csproj": {}
+    "C:\\football_c-\\FootballBooking.DAL\\FootballBooking.DAL.csproj": {}
   },
   "projects": {
-    "C:\\c#football_booking\\FootballBooking.DAL\\FootballBooking.DAL.csproj": {
+    "C:\\football_c-\\FootballBooking.DAL\\FootballBooking.DAL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\c#football_booking\\FootballBooking.DAL\\FootballBooking.DAL.csproj",
+        "projectUniqueName": "C:\\football_c-\\FootballBooking.DAL\\FootballBooking.DAL.csproj",
         "projectName": "FootballBooking.DAL",
-        "projectPath": "C:\\c#football_booking\\FootballBooking.DAL\\FootballBooking.DAL.csproj",
-        "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
-        "outputPath": "C:\\c#football_booking\\FootballBooking.DAL\\obj\\",
+        "projectPath": "C:\\football_c-\\FootballBooking.DAL\\FootballBooking.DAL.csproj",
+        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+        "outputPath": "C:\\football_c-\\FootballBooking.DAL\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+          "D:\\VSshared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -33,8 +33,8 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "C:\\c#football_booking\\FootballBooking.Models\\FootballBooking.Models.csproj": {
-                "projectPath": "C:\\c#football_booking\\FootballBooking.Models\\FootballBooking.Models.csproj"
+              "C:\\football_c-\\FootballBooking.Models\\FootballBooking.Models.csproj": {
+                "projectPath": "C:\\football_c-\\FootballBooking.Models\\FootballBooking.Models.csproj"
               }
             }
           }
@@ -76,7 +76,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.202/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -354,20 +354,20 @@
         }
       }
     },
-    "C:\\c#football_booking\\FootballBooking.Models\\FootballBooking.Models.csproj": {
+    "C:\\football_c-\\FootballBooking.Models\\FootballBooking.Models.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\c#football_booking\\FootballBooking.Models\\FootballBooking.Models.csproj",
+        "projectUniqueName": "C:\\football_c-\\FootballBooking.Models\\FootballBooking.Models.csproj",
         "projectName": "FootballBooking.Models",
-        "projectPath": "C:\\c#football_booking\\FootballBooking.Models\\FootballBooking.Models.csproj",
-        "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
-        "outputPath": "C:\\c#football_booking\\FootballBooking.Models\\obj\\",
+        "projectPath": "C:\\football_c-\\FootballBooking.Models\\FootballBooking.Models.csproj",
+        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+        "outputPath": "C:\\football_c-\\FootballBooking.Models\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+          "D:\\VSshared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -416,7 +416,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.202/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",

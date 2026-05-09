@@ -44,7 +44,10 @@ public partial class CheckoutForm : Form
             {
                 var listItem = new ListViewItem(service.Name);
                 listItem.SubItems.Add(item.Quantity.ToString());
+                listItem.SubItems.Add(service.Price.ToString("C"));
                 listItem.SubItems.Add(item.Price.ToString("C"));
+                var discountPercent = service.Price > 0 ? Math.Max(0, (1 - item.Price / service.Price) * 100) : 0;
+                listItem.SubItems.Add(discountPercent > 0 ? $"{discountPercent:0}%" : "");
                 listItem.SubItems.Add((item.Quantity * item.Price).ToString("C"));
                 listViewItems.Items.Add(listItem);
             }

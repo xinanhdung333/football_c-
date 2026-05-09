@@ -212,8 +212,10 @@ partial class MainForm
         listViewServices.Columns.AddRange(new ColumnHeader[] {
             new ColumnHeader() { Text = "ID", Width = 50 },
             new ColumnHeader() { Text = "Tên dịch vụ", Width = 150 },
-            new ColumnHeader() { Text = "Mô tả", Width = 200 },
-            new ColumnHeader() { Text = "Giá", Width = 100 },
+            new ColumnHeader() { Text = "Mô tả", Width = 170 },
+            new ColumnHeader() { Text = "Giá gốc", Width = 90 },
+            new ColumnHeader() { Text = "Giá sau giảm", Width = 100 },
+            new ColumnHeader() { Text = "Giảm", Width = 70 },
             new ColumnHeader() { Text = "Tồn kho", Width = 80 }
         });
         listViewServices.FullRowSelect = true;

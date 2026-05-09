@@ -8,16 +8,22 @@ public partial class AdminForm : Form
 {
     private FieldManagementService _fieldService = null!;
     private ServiceInventoryService _serviceService = null!;
+    private ServiceDiscountService _discountService = null!;
+    private List<Service> _services = new();
 
     public AdminForm()
     {
         InitializeComponent();
     }
 
-    public AdminForm(FieldManagementService fieldService, ServiceInventoryService serviceService) : this()
+    public AdminForm(
+        FieldManagementService fieldService,
+        ServiceInventoryService serviceService,
+        ServiceDiscountService discountService) : this()
     {
         _fieldService = fieldService;
         _serviceService = serviceService;
+        _discountService = discountService;
 
         LoadFields();
         LoadServices();
@@ -42,7 +48,7 @@ public partial class AdminForm : Form
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Lỗi tải danh sách sân: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show($"Loi tai danh sach san: {ex.Message}", "Loi", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
@@ -50,8 +56,12 @@ public partial class AdminForm : Form
     {
         try
         {
-            var services = await _serviceService.GetServicesAsync();
+            var services = (await _serviceService.GetServicesAsync()).ToList();
+            _services = services;
+
             listViewServices.Items.Clear();
+            cmbDiscountService.Items.Clear();
+            cmbDiscountService.Items.Add(new ServiceComboItem(null, "Tat ca dich vu"));
 
             foreach (var service in services)
             {
@@ -62,11 +72,48 @@ public partial class AdminForm : Form
                 item.SubItems.Add(service.Quantity.ToString());
                 item.SubItems.Add(service.Status.ToString());
                 listViewServices.Items.Add(item);
+
+                cmbDiscountService.Items.Add(new ServiceComboItem(service.Id, service.Name));
+            }
+
+            if (cmbDiscountService.SelectedIndex < 0)
+            {
+                cmbDiscountService.SelectedIndex = 0;
+            }
+
+            LoadDiscounts();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Loi tai danh sach dich vu: {ex.Message}", "Loi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    private async void LoadDiscounts()
+    {
+        try
+        {
+            var discounts = await _discountService.GetDiscountsAsync();
+            listViewDiscounts.Items.Clear();
+
+            foreach (var discount in discounts)
+            {
+                var serviceName = discount.ServiceId.HasValue
+                    ? _services.FirstOrDefault(service => service.Id == discount.ServiceId.Value)?.Name ?? $"#{discount.ServiceId.Value}"
+                    : "Tat ca dich vu";
+
+                var item = new ListViewItem(discount.Id.ToString()) { Tag = discount.Id };
+                item.SubItems.Add(serviceName);
+                item.SubItems.Add($"{discount.StartTime:hh\\:mm} - {discount.EndTime:hh\\:mm}");
+                item.SubItems.Add($"{discount.DiscountPercent:0}%");
+                item.SubItems.Add(discount.Note ?? "");
+                item.SubItems.Add(discount.IsActive ? "Active" : "Inactive");
+                listViewDiscounts.Items.Add(item);
             }
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Lỗi tải danh sách dịch vụ: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show($"Loi tai danh sach giam gia: {ex.Message}", "Loi", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
@@ -74,7 +121,7 @@ public partial class AdminForm : Form
     {
         if (listViewFields.SelectedItems.Count == 0)
         {
-            MessageBox.Show("Vui lòng chọn sân để cập nhật giá.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("Vui long chon san de cap nhat gia.", "Thong bao", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
@@ -84,17 +131,17 @@ public partial class AdminForm : Form
             try
             {
                 await _fieldService.UpdateFieldPriceAsync(selectedId, newPrice);
-                MessageBox.Show("Cập nhật giá thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Cap nhat gia thanh cong!", "Thanh cong", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LoadFields();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi cập nhật: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Loi cap nhat: {ex.Message}", "Loi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         else
         {
-            MessageBox.Show("Giá không hợp lệ.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("Gia khong hop le.", "Thong bao", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
     }
 
@@ -102,7 +149,7 @@ public partial class AdminForm : Form
     {
         if (listViewServices.SelectedItems.Count == 0)
         {
-            MessageBox.Show("Vui lòng chọn dịch vụ để cập nhật tồn kho.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("Vui long chon dich vu de cap nhat ton kho.", "Thong bao", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return;
         }
 
@@ -112,17 +159,74 @@ public partial class AdminForm : Form
             try
             {
                 await _serviceService.UpdateStockAsync(selectedId, newStock);
-                MessageBox.Show("Cập nhật tồn kho thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Cap nhat ton kho thanh cong!", "Thanh cong", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LoadServices();
+                LoadDiscounts();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi cập nhật: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Loi cap nhat: {ex.Message}", "Loi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         else
         {
-            MessageBox.Show("Số lượng không hợp lệ.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show("So luong khong hop le.", "Thong bao", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
+    private async void btnCreateDiscount_Click(object sender, EventArgs e)
+    {
+        if (numDiscountPercent.Value <= 0 || numDiscountPercent.Value >= 100)
+        {
+            MessageBox.Show("Phan tram giam phai nam trong khoang 1-99.", "Thong bao", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        var serviceId = (cmbDiscountService.SelectedItem as ServiceComboItem)?.ServiceId;
+        var discountPercent = numDiscountPercent.Value;
+
+        try
+        {
+            await _discountService.CreateDiscountAsync(new ServiceDiscount
+            {
+                ServiceId = serviceId,
+                StartTime = discountStartPicker.Value.TimeOfDay,
+                EndTime = discountEndPicker.Value.TimeOfDay,
+                Multiplier = Math.Round(1 - discountPercent / 100m, 2),
+                Note = txtDiscountNote.Text.Trim(),
+                IsActive = chkDiscountActive.Checked
+            });
+
+            txtDiscountNote.Clear();
+            numDiscountPercent.Value = 10;
+            LoadDiscounts();
+            MessageBox.Show("Da tao giam gia dich vu.", "Thanh cong", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Loi tao giam gia: {ex.Message}", "Loi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+
+    private async void btnDeleteDiscount_Click(object sender, EventArgs e)
+    {
+        if (listViewDiscounts.SelectedItems.Count == 0)
+        {
+            MessageBox.Show("Vui long chon rule giam gia.", "Thong bao", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return;
+        }
+
+        var discountId = int.Parse(listViewDiscounts.SelectedItems[0].Text);
+
+        try
+        {
+            await _discountService.DeleteDiscountAsync(discountId);
+            LoadDiscounts();
+            MessageBox.Show("Da xoa rule giam gia.", "Thanh cong", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Loi xoa giam gia: {ex.Message}", "Loi", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
@@ -132,5 +236,19 @@ public partial class AdminForm : Form
         var loginForm = new LoginForm();
         loginForm.Show();
         this.Close();
+    }
+
+    private sealed class ServiceComboItem
+    {
+        public ServiceComboItem(int? serviceId, string name)
+        {
+            ServiceId = serviceId;
+            Name = name;
+        }
+
+        public int? ServiceId { get; }
+        private string Name { get; }
+
+        public override string ToString() => Name;
     }
 }
