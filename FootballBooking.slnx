@@ -3,5 +3,6 @@
   <Project Path="FootballBooking.DAL/FootballBooking.DAL.csproj" />
   <Project Path="FootballBooking.Models/FootballBooking.Models.csproj" />
   <Project Path="FootballBooking.UI/FootballBooking.UI.csproj" />
+  <Project Path="FootballBooking.WPF/FootballBooking.WPF.csproj" />
   <Project Path="FootballBooking.Web/FootballBooking.Web.csproj" />
 </Solution>

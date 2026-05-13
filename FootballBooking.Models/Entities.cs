@@ -109,6 +109,8 @@ public class CartItem
     public decimal Price { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    public string? ServiceName { get; set; }
+    public string? FieldName { get; set; }
 }
 
 public class Order

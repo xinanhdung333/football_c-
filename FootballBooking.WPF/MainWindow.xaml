@@ -1,0 +1,57 @@
+<Window x:Class="FootballBooking.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FootballBooking.WPF"
+        mc:Ignorable="d"
+        Title="Football Booking - Trang chủ" Height="700" Width="1000"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BackgroundBrush}">
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Navigation Sidebar -->
+        <Border Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,1,0">
+            <Grid Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="FOOTBALL" FontSize="20" FontWeight="Bold" Foreground="{StaticResource PrimaryBrush}" Margin="0,0,0,40"/>
+
+                <StackPanel Grid.Row="1">
+                    <Button Content="Sân bóng" Style="{StaticResource ModernButton}" HorizontalAlignment="Stretch" Margin="0,5"
+                            Command="{Binding NavigateToFieldsCommand}"/>
+                    <Button Content="Dịch vụ" Style="{StaticResource ModernButton}" HorizontalAlignment="Stretch" Margin="0,5" 
+                            Background="Transparent" Foreground="{StaticResource TextBrush}"
+                            Command="{Binding NavigateToServicesCommand}"/>
+                    <Button Content="Giỏ hàng" Style="{StaticResource ModernButton}" HorizontalAlignment="Stretch" Margin="0,5" 
+                            Background="Transparent" Foreground="{StaticResource TextBrush}"
+                            Command="{Binding NavigateToCartCommand}"/>
+                    <Button Content="Lịch sử đặt sân" Style="{StaticResource ModernButton}" HorizontalAlignment="Stretch" Margin="0,5" 
+                            Background="Transparent" Foreground="{StaticResource TextBrush}"
+                            Command="{Binding NavigateToBookingsCommand}"/>
+                    <Button Content="Cá nhân" Style="{StaticResource ModernButton}" HorizontalAlignment="Stretch" Margin="0,5" 
+                            Background="Transparent" Foreground="{StaticResource TextBrush}"
+                            Command="{Binding NavigateToProfileCommand}"/>
+                </StackPanel>
+
+                <Button Grid.Row="2" Content="Đăng xuất" Style="{StaticResource ModernButton}" 
+                        Background="#FF5252" HorizontalAlignment="Stretch"
+                        Command="{Binding LogoutCommand}"/>
+            </Grid>
+        </Border>
+
+        <!-- Main Content Area -->
+        <Grid Grid.Column="1" Margin="30">
+            <ContentControl Content="{Binding CurrentView}"/>
+        </Grid>
+    </Grid>
+</Window>
